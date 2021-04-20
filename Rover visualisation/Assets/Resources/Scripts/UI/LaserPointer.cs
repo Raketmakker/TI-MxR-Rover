@@ -19,19 +19,19 @@ public class LaserPointer : MonoBehaviour
 
     public void PointerClick(object sender, PointerEventArgs e)
     {
-        Button b = e.target.GetComponent<Button>();
-        b?.OnSubmit(null);
+        IPointable b = e.target.GetComponent<IPointable>();
+        b?.OnPointerClick(sender, e);
     }
 
     public void PointerInside(object sender, PointerEventArgs e)
     {
-        Button b = e.target.GetComponent<Button>();
-        b?.OnSelect(null);
+        IPointable b = e.target.GetComponent<IPointable>();
+        b?.OnPointerInside(sender, e);
     }
 
     public void PointerOutside(object sender, PointerEventArgs e)
     {
-        Button b = e.target.GetComponent<Button>();
-        b?.OnDeselect(null);
+        IPointable b = e.target.GetComponent<IPointable>();
+        b?.OnPointerOutside(sender, e);
     }
 }

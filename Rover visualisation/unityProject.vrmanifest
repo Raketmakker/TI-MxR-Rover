@@ -1,0 +1,16 @@
+{
+  "source": "Unity",
+  "applications": [
+    {
+      "app_key": "application.generated.unity.rovervisualisation.exe",
+      "launch_type": "url",
+      "url": "steam://launch/",
+      "action_manifest_path": "C:\\Users\\Jaspe\\Documents\\_Github\\TI-MxR-Rover\\Rover visualisation\\Assets\\StreamingAssets\\SteamVR\\actions.json",
+      "strings": {
+        "en_us": {
+          "name": "Rover visualisation [Testing]"
+        }
+      }
+    }
+  ]
+}
