@@ -6,8 +6,13 @@ public abstract class ScrollViewItemCreator : MonoBehaviour
 {
     public GameObject contentHolder;
 
+    private void Awake()
+    {
+        FillScrollView(CreateItems());
+    }
+
     //Spawns the scrollview items as content holder children
-    public void FillScrollView(List<GameObject> scrollViewItems)
+    public virtual void FillScrollView(List<GameObject> scrollViewItems)
     {
         foreach(var item in scrollViewItems)
         {
