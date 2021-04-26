@@ -207,16 +207,6 @@
           }
         },
         {
-          "path": "/user/hand/right/input/joystick",
-          "mode": "joystick",
-          "parameters": {},
-          "inputs": {
-            "position": {
-              "output": "/actions/default/in/joystickright"
-            }
-          }
-        },
-        {
           "path": "/user/hand/left/input/joystick",
           "mode": "dpad",
           "parameters": {

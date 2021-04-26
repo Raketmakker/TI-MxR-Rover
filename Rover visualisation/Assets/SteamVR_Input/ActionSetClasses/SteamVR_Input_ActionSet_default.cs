@@ -105,11 +105,19 @@ namespace Valve.VR
             }
         }
         
-        public virtual SteamVR_Action_Vector2 JoystickRight
+        public virtual SteamVR_Action_Vector2 Scroll
         {
             get
             {
-                return SteamVR_Actions.default_JoystickRight;
+                return SteamVR_Actions.default_Scroll;
+            }
+        }
+        
+        public virtual SteamVR_Action_Boolean ToggleMenu
+        {
+            get
+            {
+                return SteamVR_Actions.default_ToggleMenu;
             }
         }
         

@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 2866109306342630974}
   - component: {fileID: 2866109306342630973}
   m_Layer: 5
-  m_Name: Scroll View
+  m_Name: ScrollView
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -124,7 +124,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   scrollSpeed: 1
   joystickAction:
-    actionPath: /actions/default/in/JoystickRight
+    actionPath: /actions/default/in/Scroll
     needsReinit: 0
 --- !u!65 &2866109306342630973
 BoxCollider:
@@ -138,7 +138,7 @@ BoxCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 200, y: 200, z: 2}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: 0, y: 0, z: 1}
 --- !u!1 &2866109306847571365
 GameObject:
   m_ObjectHideFlags: 0
