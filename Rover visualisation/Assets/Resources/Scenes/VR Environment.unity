@@ -474,6 +474,7 @@ GameObject:
   m_Component:
   - component: {fileID: 708733306}
   - component: {fileID: 708733305}
+  - component: {fileID: 708733307}
   m_Layer: 0
   m_Name: 360 Video Player
   m_TagString: Untagged
@@ -489,7 +490,7 @@ VideoPlayer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 708733304}
   m_Enabled: 1
-  m_VideoClip: {fileID: 32900000, guid: b6658fd45b96f414aa53d29f069c9529, type: 3}
+  m_VideoClip: {fileID: 0}
   m_TargetCameraAlpha: 1
   m_TargetCamera3DLayout: 0
   m_TargetCamera: {fileID: 0}
@@ -529,6 +530,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &708733307
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 708733304}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 12ca21faf88ab36458c5cc1e4a786f20, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dataTag: Data
 --- !u!1 &772921021
 GameObject:
   m_ObjectHideFlags: 0

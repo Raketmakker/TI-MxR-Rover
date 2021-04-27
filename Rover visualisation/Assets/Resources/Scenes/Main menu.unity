@@ -1072,6 +1072,21 @@ MonoBehaviour:
     type: 3}
   videoExtention: .mp4
   subfolder: Rover visualisation
+--- !u!114 &553133218
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 553133216}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: abf698a5c51c68a41878cda3b06ccc74, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nodeToDisable: {fileID: 2104487745}
+  nodes:
+  - {fileID: 1357978041}
 --- !u!1 &574134583
 GameObject:
   m_ObjectHideFlags: 0
@@ -1319,22 +1334,22 @@ PrefabInstance:
     - target: {fileID: 2866109307048786912, guid: fd5cfe1f42d03184a866e30b0b9593a4,
         type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2866109307048786912, guid: fd5cfe1f42d03184a866e30b0b9593a4,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: -17
       objectReference: {fileID: 0}
     - target: {fileID: 2866109307160085170, guid: fd5cfe1f42d03184a866e30b0b9593a4,
         type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2866109307160085170, guid: fd5cfe1f42d03184a866e30b0b9593a4,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2866109307160085170, guid: fd5cfe1f42d03184a866e30b0b9593a4,
         type: 3}
@@ -1344,22 +1359,22 @@ PrefabInstance:
     - target: {fileID: 2866109307382138065, guid: fd5cfe1f42d03184a866e30b0b9593a4,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2866109307382138065, guid: fd5cfe1f42d03184a866e30b0b9593a4,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: -17
       objectReference: {fileID: 0}
     - target: {fileID: 2866109307909289408, guid: fd5cfe1f42d03184a866e30b0b9593a4,
         type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2866109307909289408, guid: fd5cfe1f42d03184a866e30b0b9593a4,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2866109307909289408, guid: fd5cfe1f42d03184a866e30b0b9593a4,
         type: 3}
@@ -1369,22 +1384,22 @@ PrefabInstance:
     - target: {fileID: 2866109307982539374, guid: fd5cfe1f42d03184a866e30b0b9593a4,
         type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2866109307982539374, guid: fd5cfe1f42d03184a866e30b0b9593a4,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2866109307982539374, guid: fd5cfe1f42d03184a866e30b0b9593a4,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: -17
       objectReference: {fileID: 0}
     - target: {fileID: 2866109307982539374, guid: fd5cfe1f42d03184a866e30b0b9593a4,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: -17
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fd5cfe1f42d03184a866e30b0b9593a4, type: 3}
@@ -2448,7 +2463,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1232716379
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3654,7 +3669,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2104487746
 RectTransform:
   m_ObjectHideFlags: 0

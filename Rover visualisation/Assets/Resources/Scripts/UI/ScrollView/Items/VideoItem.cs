@@ -9,6 +9,8 @@ public class VideoItem : MonoBehaviour
     private string path;
     public Text name;
     public Text date;
+    public GameObject dataholder;
+    public int nextNodeIndex;
 
     public void Init(string videoPath)
     {
@@ -28,5 +30,19 @@ public class VideoItem : MonoBehaviour
     private void OnDisable()
     {
         Destroy(this.gameObject);
+    }
+
+    public void SetVideoData()
+    {
+        GameObject dataholder = Instantiate(this.dataholder);
+        DontDestroyOnLoad(dataholder);
+        VideoData data = dataholder.GetComponent<VideoData>();
+        data.VideoPath = this.path;
+    }
+
+    public void LoadVideo()
+    {
+        UiNode parent = this.transform.parent.GetComponent<UiNode>();
+        parent.SelectNode(this.nextNodeIndex);
     }
 }
