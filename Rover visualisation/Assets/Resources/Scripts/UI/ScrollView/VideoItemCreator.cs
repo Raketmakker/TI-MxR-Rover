@@ -2,27 +2,39 @@
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using UnityEngine.UI;
 
-public class VideoItemCreator : ScrollViewItemCreator
+public class VideoItemCreator : MonoBehaviour
 {
-    private List<string> videos;
+    private string path;
+    private List<string> videoPaths;
+    public GameObject spawnPanel;
     public string videoExtention = ".mp4";
     public string subfolder = "Rover visualisation";
 
+    private void OnEnable()
+    {
+        this.videoPaths = new List<string>();
+        if (!FolderHasVideos(ref videoPaths))
+            return;
+
+        CreateVideoPanels();
+    }
+
     private bool FolderHasVideos(ref List<string> videos)
     {
-        string path = Environment.GetFolderPath(Environment.SpecialFolder.MyVideos) + "\\" + this.subfolder;
-        if (!Directory.Exists(path))
+        this.path = Environment.GetFolderPath(Environment.SpecialFolder.MyVideos) + "\\" + this.subfolder;
+        if (!Directory.Exists(this.path))
         {
-            Directory.CreateDirectory(path);
-            Debug.LogWarning("Created video directory at: " + path);
+            Directory.CreateDirectory(this.path);
+            Debug.LogWarning("Created video directory at: " + this.path);
             return false;
         }
 
-        string[] files = Directory.GetFiles(path);
+        string[] files = Directory.GetFiles(this.path);
         if (!(files.Length > 0))
         {
-            Debug.LogWarning("No videos found at: " + path);
+            Debug.LogWarning("No videos found at: " + this.path);
             return false;
         }
 
@@ -38,14 +50,15 @@ public class VideoItemCreator : ScrollViewItemCreator
         return hasVideos;
     }
 
-    public override List<GameObject> CreateItems()
+    public void CreateVideoPanels()
     {
-        this.videos = new List<string>();
-        if (!FolderHasVideos(ref this.videos))
+        Debug.Log("Following videos were found: " + string.Join(",", this.videoPaths));
+
+        foreach (var videoPath in this.videoPaths)
         {
-            return new List<GameObject>();
+            GameObject videoPanel = Instantiate(this.spawnPanel, this.transform);
+            VideoItem item = videoPanel.GetComponent<VideoItem>();
+            item.Init(videoPath);
         }
-            Debug.Log("Following videos were found: " + string.Join(",", this.videos));
-        return new List<GameObject>();
     }
 }
