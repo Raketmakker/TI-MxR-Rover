@@ -11,7 +11,7 @@ public class ToggleUI : MonoBehaviour
 
     private void Update()
     {
-        if (this.menuAction.GetStateDown(SteamVR_Input_Sources.Any) || this.menuAction.GetStateUp(SteamVR_Input_Sources.Any))
+        if (this.menuAction.GetLastStateUp(SteamVR_Input_Sources.Any))
         {
             this.userInterface.SetActive(!this.userInterface.activeInHierarchy);
         }
