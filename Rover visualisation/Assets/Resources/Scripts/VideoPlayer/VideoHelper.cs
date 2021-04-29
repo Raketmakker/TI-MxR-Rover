@@ -1,24 +1,26 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.Video;
 
-[RequireComponent(typeof(VideoPlayer))]
 public class VideoHelper : MonoBehaviour
 {
-    private VideoPlayer player;
+    public VideoPlayer player;
+    public Text videoName;
+    public Text videoDate;
     public string dataTag = "Data";
 
-    private void Awake()
-    {
-        this.player = GetComponent<VideoPlayer>();
-    }
     private void Start()
     {
         GameObject dataholder = GameObject.FindWithTag(this.dataTag);
         VideoData data = dataholder.GetComponent<VideoData>();
+        FileInfo info = new FileInfo(data.VideoPath);
         this.player.url = data.VideoPath;
         this.player.Play();
+        this.videoName.text = info.Name;
+        this.videoDate.text = info.CreationTime.ToString();
         Destroy(dataholder);
     }
 }
