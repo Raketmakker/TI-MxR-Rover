@@ -40,8 +40,7 @@ namespace HLS_Test_Module
         /**
          * @function: constructor
          * @description: This is the constructor of the class. It sets the first few variables.
-         * then it removes the old segment files.
-         */ 
+         */
         public HLSStream()
         {
 
@@ -53,12 +52,30 @@ namespace HLS_Test_Module
         /**
          * @function: start()
          * @description: This function starts the first download. 
-         * The given callback will trigger the chain of async downloads.
+         * First it removes the old segment files.
+         * Then the given callback will trigger the chain of async downloads.
          */
         public void start()
         {
 
+            this.clearFolder(this.location + "audio\\");
+            this.clearFolder(this.location + "video\\");
+
             this.downloadM3u8FileAsync(this.m3u8File, new AsyncCompletedEventHandler(m3u8Callback));
+        }
+
+        /**
+         * @function: clearFolder()
+         * @param: string location
+         * @description: This function removes all files in a folder.
+         */
+        private void clearFolder(string location)
+        {
+
+            DirectoryInfo folder = new DirectoryInfo(location);
+
+            foreach (FileInfo file in folder.GetFiles())
+                file.Delete();
         }
 
         // DOWNLOAD FUNCTIONS
