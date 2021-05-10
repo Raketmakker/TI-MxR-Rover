@@ -12,7 +12,7 @@ namespace HLS_Test_Module
     class HLSStream
     {
 
-        // public parameters
+        // PUBLIC PARAMETERS
         public string location;
         public string url;
 
@@ -22,7 +22,7 @@ namespace HLS_Test_Module
 
         public bool isRunning;
 
-        // private parameters
+        // PRIVATE PARAMETERS
         private string m3u8VideoFile;
         private string m3u8AudioFile;
 
@@ -35,31 +35,54 @@ namespace HLS_Test_Module
         private string segmentName;
         private string segmentType;
 
-        // constructor
+        // BASE FUNCTIONS
+
+        /**
+         * @function: constructor
+         * @description: This is the constructor of the class. It sets the first few variables.
+         * then it removes the old segment files.
+         */ 
         public HLSStream()
         {
 
             this.m3u8VideoIndex = 0x01;
 
-            this.currentVideoSegment = 0x00;
-            this.currentAudioSegment = 0x00;
-
             this.isRunning = true;
         }
 
-        // starts the first download in the chain of asyncCallbacks
+        /**
+         * @function: start()
+         * @description: This function starts the first download. 
+         * The given callback will trigger the chain of async downloads.
+         */
         public void start()
         {
 
             this.downloadM3u8FileAsync(this.m3u8File, new AsyncCompletedEventHandler(m3u8Callback));
         }
 
-        // download Async file functions
+        // DOWNLOAD FUNCTIONS
+
+        /**
+         * @function: downloadM3u8FileAsync()
+         * @param: string filename
+         * @param: AsyncCompletedEventHandler callback
+         * @description: This function will download a m3u8 file. This function is seperated to simplefy the code.
+         */
         private void downloadM3u8FileAsync(string filename, AsyncCompletedEventHandler callback)
         {
 
             this.downloadFileAsync(this.url, this.location + "m3u8s\\", filename, callback);
         }
+
+        /**
+         * @function: downloadFileAsync()
+         * @param: string url
+         * @param: string location
+         * @param: string filename
+         * @param: AsyncCompeletedEventHandler callback
+         * @description: This function downloads a single file asyncronous and sets a callback.
+         */
         private void downloadFileAsync(string url, string location, string filename, AsyncCompletedEventHandler callback)
         {
 
@@ -70,6 +93,15 @@ namespace HLS_Test_Module
                 WC.DownloadFileAsync(new Uri(url + filename), location + filename);
             }
         }
+
+        /**
+         * @function: downloadSegmentFilesAsync()
+         * @param: string url
+         * @param: string location
+         * @param: ref int currentSegment
+         * @param: AsyncCompletedEventHandler callback
+         * @description: This function loops the downloadFileAsync function for each an every incoming segment.
+         */
         private void downloadSegmentFilesAsync(string url, string location, ref int currentSegment, AsyncCompletedEventHandler callback)
         {
 
@@ -78,11 +110,20 @@ namespace HLS_Test_Module
 
                 this.downloadFileAsync(url, location, this.segmentName + currentSegment + this.segmentType, callback);
 
-                Thread.Sleep(1);
+                Thread.Sleep(100);
             }
         }
 
-        // read the file for valueble lines
+        // FILE FUNCTIONS
+
+        /**
+         * @function: readFile()
+         * @param: string location
+         * @param: string filename
+         * @param: string search = null
+         * @return: List<string>
+         * @description: This function returns the lines of a file, if the line contains the search string.
+         */
         public List<string> readFile(string location, string filename, string search = null)
         {
 
@@ -103,6 +144,20 @@ namespace HLS_Test_Module
             return lines;
         }
 
+        /**
+         * @function: readAudioOrVideoFile()
+         * @param: out string url
+         * @param: out int currentSegment
+         * @param: string filename
+         * @param: string seach = null
+         * @description: This function sets variables depening on a read file. The usage of out makes it posible to use this function
+         * for both the audio and video parameters. This way code won't be programmed twice and changes can be made on one location.
+         * Steps:
+         *  1: The lines are received by the search string and line 0 is Splitted on the '/'.
+         *  2: The last wordt is used to receive the segmentName and segmentType.
+         *  3: The url is received from line 0.
+         *  4: The currentSegment is received from the last line.
+         */
         private void readAudioOrVideoFile(out string url, out int currentSegment, string filename, string search = null)
         {
 
@@ -110,27 +165,46 @@ namespace HLS_Test_Module
 
             string[] segments = lines[0].Split('/');
 
-            this.setSegment(segments[segments.Length - 1]);
+            this.setSegment(segments[segments.Length - 1], "0");
 
             url = this.url + lines[0].Split(this.segmentName)[0];
             currentSegment = Int32.Parse(lines[lines.Count - 1].Split(this.segmentName)[1].Split(this.segmentType)[0]);
         }
 
-        // Setters
-        private void setSegment(string filename)
+        // SETTERS
+
+        /**
+         * @function: setSegment()
+         * @param: string segmentFilename
+         * @param: string split
+         * @description: This function slits the filename of a segment and sets the name and type.
+         */
+        private void setSegment(string segmentFilename, string split)
         {
 
             if (this.segmentName == null || this.segmentType == null)
             {
 
-                this.segmentName = filename.Split('0')[0];
-                this.segmentType = filename.Split('0')[1];
+                this.segmentName = segmentFilename.Split(split)[0];
+                this.segmentType = segmentFilename.Split(split)[1];
 
                 Console.WriteLine("segmentName:\t\t" + this.segmentName + "\nsegmentType:\t\t" + this.segmentType);
             }
         }
 
-        // m3u8 callbacks
+        // M3U8 CALLBACKS
+
+        /**
+         * @function m3u8Callback()
+         * @param: object sender
+         * @param: AsyncCompletedEventArgs e
+         * @description: This function deconstructs the initial m3u8 file.
+         * Steps:
+         *  1: The lines are received by searching on the original filename minus the extention.
+         *  2: The m3u8AudioFile is received from line 0.
+         *  3: The m3u8VideoFile is received from line [m3u8VideoIndex].
+         *  4: Both the m3u8 audio and video file are downloaded asycronous.
+         */
         private void m3u8Callback(object sender, AsyncCompletedEventArgs e)
         {
 
@@ -150,6 +224,12 @@ namespace HLS_Test_Module
             this.downloadM3u8FileAsync(this.m3u8VideoFile, new AsyncCompletedEventHandler(m3u8VideoCallback));
         }
 
+        /**
+         * @function: m3u8AudioCallback()
+         * @param: object sender
+         * @param: AsyncCompletedEventArgs e
+         * @description: This funtion triggers both the readAudioOrVideoFile and downloadSegmentFilesAsync function with the audio parameters.
+         */
         private void m3u8AudioCallback(object sender, AsyncCompletedEventArgs e)
         {
 
@@ -159,11 +239,15 @@ namespace HLS_Test_Module
 
             Console.WriteLine("audioUrl:\t\t" + this.audioUrl + "\ncurrentAudioSegment:\t" + this.currentAudioSegment);
 
-            this.currentAudioSegment -= 10;
-
             this.downloadSegmentFilesAsync(this.audioUrl, this.location + "audio\\", ref this.currentAudioSegment, new AsyncCompletedEventHandler(audioSegmentCallback));
         }
 
+        /**
+         * @function: m3u8VideoCallback()
+         * @param: object sender
+         * @param: AsyncCompletedEventArgs e
+         * @description: This funtion triggers both the readAudioOrVideoFile and downloadSegmentFilesAsync function with the video parameters.
+         */
         private void m3u8VideoCallback(object sender, AsyncCompletedEventArgs e)
         {
 
@@ -173,31 +257,49 @@ namespace HLS_Test_Module
 
             Console.WriteLine("videoUrl:\t\t" + this.videoUrl + "\ncurrentVideoSegment:\t" + this.currentVideoSegment);
 
-            this.currentVideoSegment -= 10;
-
             this.downloadSegmentFilesAsync(this.videoUrl, this.location + "video\\", ref this.currentVideoSegment, new AsyncCompletedEventHandler(videoSegmentCallback));
         }
 
-        private void audioSegmentCallback(object sender, AsyncCompletedEventArgs e)
+        // SEGMENT CALLBACKS
+
+        /**
+         * @function: audioSegmentCallback()
+         * @function: videoSegmentCallback()
+         * @param: object sender
+         * @param: AsyncCompletedEventArgs e
+         * @description: Both callbacks trigger the segmentCallback with their own parameters.
+         */
+        private void audioSegmentCallback(object sender, AsyncCompletedEventArgs e) { this.segmentCallback(ref this.currentAudioSegment, "audio"); }
+        private void videoSegmentCallback(object sender, AsyncCompletedEventArgs e) { this.segmentCallback(ref this.currentVideoSegment, "video"); }
+
+        /**
+         * @function: segmentCallback()
+         * @param: ref int currentSegment
+         * @param: string type
+         * @description: This function handels the currentSegment depending on the state of the downloaded file
+         * States:
+         *  1: The file doesn't exist and a exception is thrown. Nothing happens.
+         *  2: The file is empty (The FileInfo length is 0). Nothing happens.
+         *  3: the file isn't empty. The currentSegment is increased by 1.
+         */
+        private void segmentCallback(ref int currentSegment, string type)
         {
 
-            if (new FileInfo(this.location + "audio\\" + this.segmentName + this.currentAudioSegment + this.segmentType).Length > 0)
+            try
             {
 
-                Console.WriteLine("Downloaded audio:\t" + this.segmentName + this.currentAudioSegment + this.segmentType);
-                this.currentAudioSegment++;
+                if (new FileInfo(this.location + type + "\\" + this.segmentName + currentSegment + this.segmentType).Length > 0)
+                {
+
+                    Console.WriteLine("Downloaded " + type + ":\t" + this.segmentName + currentSegment + this.segmentType);
+
+                    currentSegment++;
+                }
             }
-        }
-
-        private void videoSegmentCallback(object sender, AsyncCompletedEventArgs e)
-        {
-
-            if (new FileInfo(this.location + "video\\" + this.segmentName + this.currentVideoSegment + this.segmentType).Length > 0)
+            catch (FileNotFoundException e) 
             {
 
-                Console.WriteLine("Downloaded video:\t" + this.segmentName + this.currentVideoSegment + this.segmentType);
-
-                this.currentVideoSegment++;
+                Console.WriteLine("Expection:\t\t" + e.Message);
             }
         }
     }
