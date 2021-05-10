@@ -15,6 +15,8 @@ public class VideoHelper : MonoBehaviour
     private void Start()
     {
         GameObject dataholder = GameObject.FindWithTag(this.dataTag);
+        if (dataholder == null)
+            return;
         VideoData data = dataholder.GetComponent<VideoData>();
         FileInfo info = new FileInfo(data.VideoPath);
         this.player.url = data.VideoPath;

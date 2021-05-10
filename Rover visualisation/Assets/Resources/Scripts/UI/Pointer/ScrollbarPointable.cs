@@ -35,6 +35,9 @@ public class ScrollbarPointable : MonoBehaviour, IPointable
 
     void FixedUpdate()
     {
+        if (this.joystickAction != null)
+            return;
+
         Vector2 joystickValue = joystickAction.GetAxis(SteamVR_Input_Sources.Any);
         if (this.selected && joystickValue != Vector2.zero)
         {

@@ -44,3 +44,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 2778752828009102925, guid: 776106c118990794084c9d58fc47d0d6, type: 3}
+  playerTag: Player

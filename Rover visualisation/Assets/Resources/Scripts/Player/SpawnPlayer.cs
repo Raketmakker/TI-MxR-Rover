@@ -5,14 +5,13 @@ using UnityEngine;
 public class SpawnPlayer : MonoBehaviour
 {
     public GameObject player;
-    private static bool spawned = false;
+    public string playerTag = "Player";
 
     private void Awake()
     {
-        if (!spawned)
+        if (GameObject.FindGameObjectWithTag(this.playerTag) == null)
         {
             Instantiate(player);
-            spawned = true;
         }
     }
 }
