@@ -21,6 +21,7 @@ namespace HLS_Test_Module
         public int m3u8VideoIndex;
 
         public bool isRunning;
+        public bool isVideoOnly;
 
         // PRIVATE PARAMETERS
         private string m3u8VideoFile;
@@ -59,9 +60,19 @@ namespace HLS_Test_Module
         {
 
             this.clearFolder(this.location + "audio\\");
+            this.clearFolder(this.location + "m3u8s\\");
             this.clearFolder(this.location + "video\\");
 
-            this.downloadM3u8FileAsync(this.m3u8File, new AsyncCompletedEventHandler(m3u8Callback));
+            if (!this.isVideoOnly)
+                this.downloadM3u8FileAsync(this.m3u8File, new AsyncCompletedEventHandler(m3u8Callback));
+            else
+            {
+
+                this.videoUrl = this.url;
+                this.m3u8VideoFile = this.m3u8File;
+
+                this.downloadM3u8FileAsync(this.m3u8VideoFile, new AsyncCompletedEventHandler(m3u8VideoCallback));
+            }
         }
 
         /**
@@ -138,10 +149,11 @@ namespace HLS_Test_Module
          * @param: string location
          * @param: string filename
          * @param: string search = null
+         * @param: bool isNegative = false
          * @return: List<string>
          * @description: This function returns the lines of a file, if the line contains the search string.
          */
-        public List<string> readFile(string location, string filename, string search = null)
+        public List<string> readFile(string location, string filename, string search = null, bool isNegative = false)
         {
 
             System.IO.StreamReader file = new System.IO.StreamReader(location + filename);
@@ -152,8 +164,9 @@ namespace HLS_Test_Module
             while ((line = file.ReadLine()) != null)
             {
 
-                if (search == null || line.Contains(search))
-                    lines.Add(line);
+                if (search == null || isNegative && !line.Contains(search) || !isNegative && line.Contains(search))
+                    if (line.Length > 0)
+                        lines.Add(line);
 
                 counter++;
             }
@@ -167,6 +180,7 @@ namespace HLS_Test_Module
          * @param: out int currentSegment
          * @param: string filename
          * @param: string seach = null
+         * @param: bool isNegative = false
          * @description: This function sets variables depening on a read file. The usage of out makes it posible to use this function
          * for both the audio and video parameters. This way code won't be programmed twice and changes can be made on one location.
          * Steps:
@@ -175,14 +189,14 @@ namespace HLS_Test_Module
          *  3: The url is received from line 0.
          *  4: The currentSegment is received from the last line.
          */
-        private void readAudioOrVideoFile(out string url, out int currentSegment, string filename, string search = null)
+        private void readAudioOrVideoFile(out string url, out int currentSegment, string filename, string search = null, bool isNegative = false)
         {
 
-            List<string> lines = this.readFile(this.location + "m3u8s\\", filename, search);
+            List<string> lines = this.readFile(this.location + "m3u8s\\", filename, search, isNegative);
 
             string[] segments = lines[0].Split('/');
 
-            this.setSegment(segments[segments.Length - 1], "0");
+            this.setSegment(segments[segments.Length - 1]);
 
             url = this.url + lines[0].Split(this.segmentName)[0];
             currentSegment = Int32.Parse(lines[lines.Count - 1].Split(this.segmentName)[1].Split(this.segmentType)[0]);
@@ -193,17 +207,24 @@ namespace HLS_Test_Module
         /**
          * @function: setSegment()
          * @param: string segmentFilename
-         * @param: string split
          * @description: This function slits the filename of a segment and sets the name and type.
+         * This is prepared by changing all numbers to '#'.
          */
-        private void setSegment(string segmentFilename, string split)
+        private void setSegment(string segmentFilename)
         {
 
             if (this.segmentName == null || this.segmentType == null)
             {
 
-                this.segmentName = segmentFilename.Split(split)[0];
-                this.segmentType = segmentFilename.Split(split)[1];
+                string name = "";
+
+                foreach (char c in segmentFilename)
+                    name += (Char.IsDigit(c) ? '#' : c);
+
+                string[] segments = name.Split('#');
+
+                this.segmentName = segments[0];
+                this.segmentType = segments[segments.Length - 1];
 
                 Console.WriteLine("segmentName:\t\t" + this.segmentName + "\nsegmentType:\t\t" + this.segmentType);
             }
@@ -227,7 +248,7 @@ namespace HLS_Test_Module
 
             Console.WriteLine("Downloaded:\t\t" + this.m3u8File);
 
-            List<string> lines = this.readFile(this.location + "m3u8s\\", this.m3u8File, this.m3u8File.Split('.')[0]);
+            List<string> lines = this.readFile(this.location + "m3u8s\\", this.m3u8File, this.m3u8File.Split('.')[0], false);
 
             this.m3u8AudioFile = lines[0].Split("URI=\"")[1].Split('"')[0];
             this.m3u8VideoFile = lines[this.m3u8VideoIndex];
@@ -252,7 +273,7 @@ namespace HLS_Test_Module
 
             Console.WriteLine("\nDownloaded:\t\t" + this.m3u8AudioFile);
 
-            this.readAudioOrVideoFile(out this.audioUrl, out this.currentAudioSegment, this.m3u8AudioFile, "audio");
+            this.readAudioOrVideoFile(out this.audioUrl, out this.currentAudioSegment, this.m3u8AudioFile, "#", true);
 
             Console.WriteLine("audioUrl:\t\t" + this.audioUrl + "\ncurrentAudioSegment:\t" + this.currentAudioSegment);
 
@@ -270,7 +291,7 @@ namespace HLS_Test_Module
 
             Console.WriteLine("\nDownloaded:\t\t" + this.m3u8VideoFile);
 
-            this.readAudioOrVideoFile(out this.videoUrl, out this.currentVideoSegment, this.m3u8VideoFile, "video");
+            this.readAudioOrVideoFile(out this.videoUrl, out this.currentVideoSegment, this.m3u8VideoFile, "#", true);
 
             Console.WriteLine("videoUrl:\t\t" + this.videoUrl + "\ncurrentVideoSegment:\t" + this.currentVideoSegment);
 
