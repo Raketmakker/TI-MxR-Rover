@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Net;
 using System.Text;
+using System.Threading;
 
 namespace HLS_Test_Module
 {
@@ -17,6 +19,8 @@ namespace HLS_Test_Module
         public string m3u8File;
 
         public int m3u8VideoIndex;
+
+        public bool isRunning;
 
         // private parameters
         private string m3u8VideoFile;
@@ -39,6 +43,8 @@ namespace HLS_Test_Module
 
             this.currentVideoSegment = 0x00;
             this.currentAudioSegment = 0x00;
+
+            this.isRunning = true;
         }
 
         // starts the first download in the chain of asyncCallbacks
@@ -49,19 +55,30 @@ namespace HLS_Test_Module
         }
 
         // download Async file functions
-        public void downloadM3u8FileAsync(string filename, AsyncCompletedEventHandler callback)
-        {       
-            
-            this.downloadFileAsync(this.url, this.location + "m3u8s\\", filename, callback);
-        }
-        public void downloadFileAsync(string url, string location, string filename, AsyncCompletedEventHandler callback)
+        private void downloadM3u8FileAsync(string filename, AsyncCompletedEventHandler callback)
         {
 
-            using(WebClient WC = new WebClient())
+            this.downloadFileAsync(this.url, this.location + "m3u8s\\", filename, callback);
+        }
+        private void downloadFileAsync(string url, string location, string filename, AsyncCompletedEventHandler callback)
+        {
+
+            using (WebClient WC = new WebClient())
             {
 
                 WC.DownloadFileCompleted += callback;
                 WC.DownloadFileAsync(new Uri(url + filename), location + filename);
+            }
+        }
+        private void downloadSegmentFilesAsync(string url, string location, ref int currentSegment, AsyncCompletedEventHandler callback)
+        {
+
+            while (this.isRunning)
+            {
+
+                this.downloadFileAsync(url, location, this.segmentName + currentSegment + this.segmentType, callback);
+
+                Thread.Sleep(1);
             }
         }
 
@@ -70,7 +87,7 @@ namespace HLS_Test_Module
         {
 
             System.IO.StreamReader file = new System.IO.StreamReader(location + filename);
-            List<string> lines = new List<string>(); 
+            List<string> lines = new List<string>();
             string line;
             int counter = 0;
 
@@ -86,7 +103,7 @@ namespace HLS_Test_Module
             return lines;
         }
 
-        private void readFileAudioVideo(out string url, out int currentSegment, string filename, string search = null)
+        private void readAudioOrVideoFile(out string url, out int currentSegment, string filename, string search = null)
         {
 
             List<string> lines = this.readFile(this.location + "m3u8s\\", filename, search);
@@ -94,11 +111,12 @@ namespace HLS_Test_Module
             string[] segments = lines[0].Split('/');
 
             this.setSegment(segments[segments.Length - 1]);
-            
+
             url = this.url + lines[0].Split(this.segmentName)[0];
             currentSegment = Int32.Parse(lines[lines.Count - 1].Split(this.segmentName)[1].Split(this.segmentType)[0]);
         }
 
+        // Setters
         private void setSegment(string filename)
         {
 
@@ -117,7 +135,7 @@ namespace HLS_Test_Module
         {
 
             Console.WriteLine("Downloaded:\t\t" + this.m3u8File);
-            
+
             List<string> lines = this.readFile(this.location + "m3u8s\\", this.m3u8File, this.m3u8File.Split('.')[0]);
 
             this.m3u8AudioFile = lines[0].Split("URI=\"")[1].Split('"')[0];
@@ -137,9 +155,13 @@ namespace HLS_Test_Module
 
             Console.WriteLine("\nDownloaded:\t\t" + this.m3u8AudioFile);
 
-            this.readFileAudioVideo(out this.audioUrl, out this.currentAudioSegment, this.m3u8AudioFile, "audio");
+            this.readAudioOrVideoFile(out this.audioUrl, out this.currentAudioSegment, this.m3u8AudioFile, "audio");
 
-            Console.WriteLine("audioUrl:\t\t" + this.audioUrl);
+            Console.WriteLine("audioUrl:\t\t" + this.audioUrl + "\ncurrentAudioSegment:\t" + this.currentAudioSegment);
+
+            this.currentAudioSegment -= 10;
+
+            this.downloadSegmentFilesAsync(this.audioUrl, this.location + "audio\\", ref this.currentAudioSegment, new AsyncCompletedEventHandler(audioSegmentCallback));
         }
 
         private void m3u8VideoCallback(object sender, AsyncCompletedEventArgs e)
@@ -147,16 +169,36 @@ namespace HLS_Test_Module
 
             Console.WriteLine("\nDownloaded:\t\t" + this.m3u8VideoFile);
 
-            this.readFileAudioVideo(out this.videoUrl, out this.currentVideoSegment, this.m3u8VideoFile, "video");
+            this.readAudioOrVideoFile(out this.videoUrl, out this.currentVideoSegment, this.m3u8VideoFile, "video");
 
-            Console.WriteLine("videoUrl:\t\t" + this.videoUrl);
+            Console.WriteLine("videoUrl:\t\t" + this.videoUrl + "\ncurrentVideoSegment:\t" + this.currentVideoSegment);
+
+            this.currentVideoSegment -= 10;
+
+            this.downloadSegmentFilesAsync(this.videoUrl, this.location + "video\\", ref this.currentVideoSegment, new AsyncCompletedEventHandler(videoSegmentCallback));
         }
-        
-        // loops
-        private void fileAquireLoop(out int currentSegment, string url, string location)
+
+        private void audioSegmentCallback(object sender, AsyncCompletedEventArgs e)
         {
 
-            currentSegment = 1;
+            if (new FileInfo(this.location + "audio\\" + this.segmentName + this.currentAudioSegment + this.segmentType).Length > 0)
+            {
+
+                Console.WriteLine("Downloaded audio:\t" + this.segmentName + this.currentAudioSegment + this.segmentType);
+                this.currentAudioSegment++;
+            }
+        }
+
+        private void videoSegmentCallback(object sender, AsyncCompletedEventArgs e)
+        {
+
+            if (new FileInfo(this.location + "video\\" + this.segmentName + this.currentVideoSegment + this.segmentType).Length > 0)
+            {
+
+                Console.WriteLine("Downloaded video:\t" + this.segmentName + this.currentVideoSegment + this.segmentType);
+
+                this.currentVideoSegment++;
+            }
         }
     }
 }
