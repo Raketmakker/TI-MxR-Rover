@@ -9,6 +9,24 @@ using System.Threading;
 namespace HLS_Test_Module
 {
 
+    /**
+     * @class: HLSStream
+     * @description:
+     *      The HLSStream class is created just to download the segments of a HLS stream.
+     *      This had to be done in order to create a livestream in unity.
+     *      
+     *      It can:
+     *          1: Download m3u8 files and decompose these.
+     *          2: Use m3u8 files with seperate audio and video or combined audio and video.
+     *          3: Download the newest whole segment depending on number and filesize.
+     *          
+     *      It can not:
+     *          1: Use any other stream protocol.
+     *          2: Use encription or authorisation.
+     *      
+     *      It is:
+     *          1: Open to be updated when required.
+     */
     class HLSStream
     {
 
@@ -17,37 +35,52 @@ namespace HLS_Test_Module
         public string url;
 
         public string m3u8File;
-
         public int m3u8VideoIndex;
 
-        public bool isRunning;
-        public bool isVideoOnly;
+        public bool isAudioAndVideo;
+
+        // PRIVATE VIDEO PARAMETERS
+        private string m3u8Video;
+        private string videoUrl;
+        private long videoSize;
+        private int videoSegment;
+
+        // PRIVATE AUDIO PARAMETERS
+        private string m3u8Audio;
+        private string audioUrl;
+        private long audioSize;
+        private int audioSegment;
 
         // PRIVATE PARAMETERS
-        private string m3u8VideoFile;
-        private string m3u8AudioFile;
-
-        private string videoUrl;
-        private string audioUrl;
-
-        private int currentVideoSegment;
-        private int currentAudioSegment;
-
         private string segmentName;
         private string segmentType;
+        
+        private bool isRunning;
 
         // BASE FUNCTIONS
 
         /**
          * @function: constructor
+         * @param: string url = null
+         * @param: string location = null
+         * @param: string m3u8File = null
+         * @param: int m3u8VideoIndex = 1
+         * @param: bool isVideoOnly = false
          * @description: This is the constructor of the class. It sets the first few variables.
          */
-        public HLSStream()
+        public HLSStream(string url = null, string location = null, string m3u8File = null, int m3u8VideoIndex = 1, bool isAudioAndVideo = false)
         {
 
-            this.m3u8VideoIndex = 0x01;
+            this.url = url;
+            this.location = location;
+            this.m3u8File = m3u8File;
+            this.m3u8VideoIndex = m3u8VideoIndex;
 
-            this.isRunning = true;
+            this.isAudioAndVideo = isAudioAndVideo;
+            this.isRunning = false;
+
+            this.videoSize = 0;
+            this.audioSize = 0;
         }
 
         /**
@@ -63,16 +96,30 @@ namespace HLS_Test_Module
             this.clearFolder(this.location + "m3u8s\\");
             this.clearFolder(this.location + "video\\");
 
-            if (!this.isVideoOnly)
-                this.downloadM3u8FileAsync(this.m3u8File, new AsyncCompletedEventHandler(m3u8Callback));
+            this.isRunning = true;
+
+            if (!this.isAudioAndVideo)
+                this.downloadM3u8FileAsync(this.m3u8File, new AsyncCompletedEventHandler(m3u8FileCallback));
             else
             {
 
                 this.videoUrl = this.url;
-                this.m3u8VideoFile = this.m3u8File;
+                this.m3u8Video = this.m3u8File;
 
-                this.downloadM3u8FileAsync(this.m3u8VideoFile, new AsyncCompletedEventHandler(m3u8VideoCallback));
+                this.downloadM3u8FileAsync(this.m3u8Video, new AsyncCompletedEventHandler(m3u8VideoCallback));
             }
+        }
+
+        /**
+         * @funciton: stop()
+         * @description: This function stops the HLSStream after the m3u8 setup.
+         */
+        public void stop()
+        {
+
+            this.isRunning = false;
+
+            Console.WriteLine("\nHLSStream stopped");
         }
 
         /**
@@ -138,8 +185,10 @@ namespace HLS_Test_Module
 
                 this.downloadFileAsync(url, location, this.segmentName + currentSegment + this.segmentType, callback);
 
-                Thread.Sleep(100);
+                Thread.Sleep(250);
             }
+
+            Console.WriteLine("DownloadSegmentFileAsync loop stopped");
         }
 
         // FILE FUNCTIONS
@@ -233,7 +282,7 @@ namespace HLS_Test_Module
         // M3U8 CALLBACKS
 
         /**
-         * @function m3u8Callback()
+         * @function m3u8FileCallback()
          * @param: object sender
          * @param: AsyncCompletedEventArgs e
          * @description: This function deconstructs the initial m3u8 file.
@@ -243,23 +292,23 @@ namespace HLS_Test_Module
          *  3: The m3u8VideoFile is received from line [m3u8VideoIndex].
          *  4: Both the m3u8 audio and video file are downloaded asycronous.
          */
-        private void m3u8Callback(object sender, AsyncCompletedEventArgs e)
+        private void m3u8FileCallback(object sender, AsyncCompletedEventArgs e)
         {
 
             Console.WriteLine("Downloaded:\t\t" + this.m3u8File);
 
             List<string> lines = this.readFile(this.location + "m3u8s\\", this.m3u8File, this.m3u8File.Split('.')[0], false);
 
-            this.m3u8AudioFile = lines[0].Split("URI=\"")[1].Split('"')[0];
-            this.m3u8VideoFile = lines[this.m3u8VideoIndex];
+            this.m3u8Audio = lines[0].Split("URI=\"")[1].Split('"')[0];
+            this.m3u8Video = lines[this.m3u8VideoIndex];
 
-            Console.WriteLine("\nm3u8AudioFile:\t\t" + this.m3u8AudioFile);
+            Console.WriteLine("\nm3u8Audio:\t\t" + this.m3u8Audio);
 
             for (int i = 1; i < lines.Count; i++)
                 Console.WriteLine("m3u8VideoIndex " + i + ":\t" + lines[i]);
 
-            this.downloadM3u8FileAsync(this.m3u8AudioFile, new AsyncCompletedEventHandler(m3u8AudioCallback));
-            this.downloadM3u8FileAsync(this.m3u8VideoFile, new AsyncCompletedEventHandler(m3u8VideoCallback));
+            this.downloadM3u8FileAsync(this.m3u8Audio, new AsyncCompletedEventHandler(m3u8AudioCallback));
+            this.downloadM3u8FileAsync(this.m3u8Video, new AsyncCompletedEventHandler(m3u8VideoCallback));
         }
 
         /**
@@ -271,13 +320,13 @@ namespace HLS_Test_Module
         private void m3u8AudioCallback(object sender, AsyncCompletedEventArgs e)
         {
 
-            Console.WriteLine("\nDownloaded:\t\t" + this.m3u8AudioFile);
+            Console.WriteLine("\nDownloaded:\t\t" + this.m3u8Audio);
 
-            this.readAudioOrVideoFile(out this.audioUrl, out this.currentAudioSegment, this.m3u8AudioFile, "#", true);
+            this.readAudioOrVideoFile(out this.audioUrl, out this.audioSegment, this.m3u8Audio, "#", true);
 
-            Console.WriteLine("audioUrl:\t\t" + this.audioUrl + "\ncurrentAudioSegment:\t" + this.currentAudioSegment);
+            Console.WriteLine("audioUrl:\t\t" + this.audioUrl + "\naudioSegment:\t\t" + this.audioSegment);
 
-            this.downloadSegmentFilesAsync(this.audioUrl, this.location + "audio\\", ref this.currentAudioSegment, new AsyncCompletedEventHandler(audioSegmentCallback));
+            this.downloadSegmentFilesAsync(this.audioUrl, this.location + "audio\\", ref this.audioSegment, new AsyncCompletedEventHandler(audioSegmentCallback));
         }
 
         /**
@@ -289,13 +338,13 @@ namespace HLS_Test_Module
         private void m3u8VideoCallback(object sender, AsyncCompletedEventArgs e)
         {
 
-            Console.WriteLine("\nDownloaded:\t\t" + this.m3u8VideoFile);
+            Console.WriteLine("\nDownloaded:\t\t" + this.m3u8Video);
 
-            this.readAudioOrVideoFile(out this.videoUrl, out this.currentVideoSegment, this.m3u8VideoFile, "#", true);
+            this.readAudioOrVideoFile(out this.videoUrl, out this.videoSegment, this.m3u8Video, "#", true);
 
-            Console.WriteLine("videoUrl:\t\t" + this.videoUrl + "\ncurrentVideoSegment:\t" + this.currentVideoSegment);
+            Console.WriteLine("videoUrl:\t\t" + this.videoUrl + "\nvideoSegment:\t\t" + this.videoSegment);
 
-            this.downloadSegmentFilesAsync(this.videoUrl, this.location + "video\\", ref this.currentVideoSegment, new AsyncCompletedEventHandler(videoSegmentCallback));
+            this.downloadSegmentFilesAsync(this.videoUrl, this.location + "video\\", ref this.videoSegment, new AsyncCompletedEventHandler(videoSegmentCallback));
         }
 
         // SEGMENT CALLBACKS
@@ -307,29 +356,36 @@ namespace HLS_Test_Module
          * @param: AsyncCompletedEventArgs e
          * @description: Both callbacks trigger the segmentCallback with their own parameters.
          */
-        private void audioSegmentCallback(object sender, AsyncCompletedEventArgs e) { this.segmentCallback(ref this.currentAudioSegment, "audio"); }
-        private void videoSegmentCallback(object sender, AsyncCompletedEventArgs e) { this.segmentCallback(ref this.currentVideoSegment, "video"); }
+        private void audioSegmentCallback(object sender, AsyncCompletedEventArgs e) { this.segmentCallback(ref this.audioSegment, ref this.audioSize, "audio"); }
+        private void videoSegmentCallback(object sender, AsyncCompletedEventArgs e) { this.segmentCallback(ref this.videoSegment, ref this.videoSize, "video"); }
 
         /**
          * @function: segmentCallback()
          * @param: ref int currentSegment
+         * @param: ref long fileSize
          * @param: string type
          * @description: This function handels the currentSegment depending on the state of the downloaded file
          * States:
          *  1: The file doesn't exist and a exception is thrown. Nothing happens.
-         *  2: The file is empty (The FileInfo length is 0). Nothing happens.
-         *  3: the file isn't empty. The currentSegment is increased by 1.
+         *  2: The file is longer then the original downloaded file. Download again until the size doesn't change.
+         *  3: the file is just as long as the original downloaded file. The currentSegment is increased by 1.
          */
-        private void segmentCallback(ref int currentSegment, string type)
+        private void segmentCallback(ref int currentSegment, ref long fileSize, string type)
         {
 
             try
             {
 
-                if (new FileInfo(this.location + type + "\\" + this.segmentName + currentSegment + this.segmentType).Length > 0)
+                long currentFileSize = new FileInfo(this.location + type + "\\" + this.segmentName + currentSegment + this.segmentType).Length;
+
+                if (currentFileSize > fileSize) 
+                    fileSize = currentFileSize;
+                else if (currentFileSize == fileSize && fileSize != 0)
                 {
 
-                    Console.WriteLine("Downloaded " + type + ":\t" + this.segmentName + currentSegment + this.segmentType);
+                    fileSize = 0;
+
+                    Console.WriteLine("Downloaded " + type + ":\t" + this.segmentName + currentSegment + this.segmentType + " - " + currentFileSize);
 
                     currentSegment++;
                 }
