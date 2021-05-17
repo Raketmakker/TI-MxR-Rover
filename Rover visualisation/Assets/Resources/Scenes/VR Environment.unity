@@ -427,6 +427,7 @@ GameObject:
   m_Component:
   - component: {fileID: 708733306}
   - component: {fileID: 708733305}
+  - component: {fileID: 708733307}
   m_Layer: 0
   m_Name: 360 Video Player
   m_TagString: Untagged
@@ -482,6 +483,24 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &708733307
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 708733304}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 006f6d99012e22c45b67d8e7477ed6be, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  location: Assets/Resources/Scripts/HLS/HLSDownloads
+  url: https://bitmovin-a.akamaihd.net/content/MI201109210084_1/m3u8s/
+  M3U8File: f08e80da-bf1d-4e3d-8899-f0f6155f6efa.m3u8
+  M3U8VideoIndex: 5
+  sleepBetweenSegments: 0
+  isAudioAndVideo: 0
 --- !u!1 &772921021
 GameObject:
   m_ObjectHideFlags: 0

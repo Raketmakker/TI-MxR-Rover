@@ -12,11 +12,11 @@ namespace HLS_Test_Module
 
             HLSStream HLS = new HLSStream();
 
-            HLS.url             = "http://192.168.68.185:8080/hls/";
+            HLS.url             = "https://bitmovin-a.akamaihd.net/content/MI201109210084_1/m3u8s/";
             HLS.location        = Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).Parent.Parent.Parent.FullName + "\\HLSFiles\\";
-            HLS.m3u8File        = "test.m3u8";
+            HLS.m3u8File        = "f08e80da-bf1d-4e3d-8899-f0f6155f6efa.m3u8";
             HLS.m3u8VideoIndex  = 5;
-            HLS.isAudioAndVideo = true;
+            HLS.isAudioAndVideo = false;
 
             HLS.start();
 

@@ -72,6 +72,7 @@ namespace HLS_Test_Module
         {
 
             this.url = url;
+
             this.location = location;
             this.m3u8File = m3u8File;
             this.m3u8VideoIndex = m3u8VideoIndex;
@@ -243,12 +244,13 @@ namespace HLS_Test_Module
 
             List<string> lines = this.readFile(this.location + "m3u8s\\", filename, search, isNegative);
 
-            string[] segments = lines[0].Split('/');
+            string[] segments = lines[lines.Count - 1].Split('/');
+            this.setSegment(out currentSegment, segments[segments.Length - 1]);
 
-            this.setSegment(segments[segments.Length - 1]);
+            url = this.url;
 
-            url = this.url + lines[0].Split(this.segmentName)[0];
-            currentSegment = Int32.Parse(lines[lines.Count - 1].Split(this.segmentName)[1].Split(this.segmentType)[0]);
+            for (int i = 0; i < segments.Length - 1; i++)
+                url += segments[i] + "/";
         }
 
         // SETTERS
@@ -259,24 +261,26 @@ namespace HLS_Test_Module
          * @description: This function slits the filename of a segment and sets the name and type.
          * This is prepared by changing all numbers to '#'.
          */
-        private void setSegment(string segmentFilename)
+        private void setSegment(out int currentSegment, string segmentFilename)
         {
 
-            if (this.segmentName == null || this.segmentType == null)
+            string digit = "", name = "";
+
+            foreach (char c in segmentFilename)
             {
 
-                string name = "";
-
-                foreach (char c in segmentFilename)
-                    name += (Char.IsDigit(c) ? '#' : c);
-
-                string[] segments = name.Split('#');
-
-                this.segmentName = segments[0];
-                this.segmentType = segments[segments.Length - 1];
-
-                Console.WriteLine("segmentName:\t\t" + this.segmentName + "\nsegmentType:\t\t" + this.segmentType);
+                name  += (Char.IsDigit(c) ? '#' : c);
+                digit += (Char.IsDigit(c) ? c : ' ');
             }
+
+            string[] segments = name.Split('#');
+
+            this.segmentName = segments[0];
+            this.segmentType = segments[segments.Length - 1];
+
+            currentSegment = Int32.Parse(digit);
+            
+            Console.WriteLine("segmentName & Type:\t" + this.segmentName + " & " + this.segmentType);
         }
 
         // M3U8 CALLBACKS
@@ -298,8 +302,12 @@ namespace HLS_Test_Module
             Console.WriteLine("Downloaded:\t\t" + this.m3u8File);
 
             List<string> lines = this.readFile(this.location + "m3u8s\\", this.m3u8File, this.m3u8File.Split('.')[0], false);
+            string[] audioLine = lines[0].Split('\"');
 
-            this.m3u8Audio = lines[0].Split("URI=\"")[1].Split('"')[0];
+            for (int i = 0; i < audioLine.Length; i++)
+                if (audioLine[i].Contains(this.m3u8File.Split('.')[0]))
+                    this.m3u8Audio = audioLine[i]; 
+
             this.m3u8Video = lines[this.m3u8VideoIndex];
 
             Console.WriteLine("\nm3u8Audio:\t\t" + this.m3u8Audio);
