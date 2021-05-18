@@ -29,9 +29,9 @@ public class HLSStream : MonoBehaviour
 
     // UNITY FUNCTIONS
     void Start()        { this.start(); }
-    void OnDestroy()    { this.stop();  }
+    void OnDestroy()    { this.stop(); }
 
-    // PUBLIC PARAMETERS
+    // PARAMETERS
     public string location;
     public string url;
 
@@ -41,51 +41,14 @@ public class HLSStream : MonoBehaviour
     public int sleepBetweenSegments;
     public bool isAudioAndVideo;
 
-    // PRIVATE VIDEO PARAMETERS
-    private string M3U8Video;
-    private string videoUrl;
-    private long videoSize;
-    private int videoSegment;
-
-    // PRIVATE AUDIO PARAMETERS
-    private string M3U8Audio;
-    private string audioUrl;
-    private long audioSize;
-    private int audioSegment;
-
-    // PRIVATE PARAMETERS
-    private string segmentName;
-    private string segmentType;
-
-    private bool isRunning;
+    private List<HLSSegmentStream> streams; 
 
     // BASE FUNCTIONS
 
-    /**
-     * @function: constructor
-     * @param: string url = null
-     * @param: string location = null
-     * @param: string M3U8File = null
-     * @param: int M3U8VideoIndex = 1
-     * @param: bool isVideoOnly = false
-     * @description: This is the constructor of the class. It sets the first few variables.
-     */
-    public HLSStream(string url = null, string location = null, string M3U8File = null, int M3U8VideoIndex = 1, bool isAudioAndVideo = false)
+    public HLSStream()
     {
 
-        this.url = url;
-        this.audioUrl = url;
-        this.videoUrl = url;
-
-        this.location = location;
-        this.M3U8File = M3U8File;
-        this.M3U8VideoIndex = M3U8VideoIndex;
-
-        this.isAudioAndVideo = isAudioAndVideo;
-        this.isRunning = false;
-
-        this.videoSize = 0;
-        this.audioSize = 0;
+        this.streams = new List<HLSSegmentStream>();
     }
 
     /**
@@ -108,10 +71,10 @@ public class HLSStream : MonoBehaviour
         else
         {
 
-            this.videoUrl = this.url;
-            this.M3U8Video = this.M3U8File;
+            this.urls[this.videoKey] = this.url;
+            this.M3U8Files[this.videoKey] = this.M3U8File;
 
-            this.downloadM3U8FileAsync(this.M3U8Video, new AsyncCompletedEventHandler(M3U8VideoCallback));
+            this.downloadM3U8FileAsync(this.M3U8File, new AsyncCompletedEventHandler(M3U8VideoCallback));
         }
     }
 
@@ -180,20 +143,21 @@ public class HLSStream : MonoBehaviour
      * @param: string location
      * @param: ref int currentSegment
      * @param: AsyncCompletedEventHandler callback
+     * @return: IEnumerable
      * @description: This function loops the downloadFileAsync function for each an every incoming segment.
      */
-    private void downloadSegmentFilesAsync(string url, string location, ref int currentSegment, AsyncCompletedEventHandler callback)
+    private IEnumerable downloadSegmentFilesAsync(string url, string location, ref int currentSegment, AsyncCompletedEventHandler callback)
     {
 
         while (this.isRunning)
         {
 
-            this.downloadFileAsync(url, location, this.segmentName + currentSegment + this.segmentType, callback);
+            yield return new WaitForSeconds(this.sleepBetweenSegments);
 
-            Thread.Sleep(this.sleepBetweenSegments);
+            this.downloadFileAsync(url, location, this.segmentName + currentSegment + this.segmentType, callback);
         }
 
-        Debug.Log("DownloadSegmentFileAsync loop stopped");
+        
     }
 
     // FILE FUNCTIONS
@@ -328,25 +292,44 @@ public class HLSStream : MonoBehaviour
             this.downloadM3U8FileAsync(this.M3U8Video, new AsyncCompletedEventHandler(M3U8VideoCallback));
         }
         else
-            this.start();
+            this.start(); // restart
     }
 
     /**
      * @function: M3U8AudioCallback()
      * @param: object sender
      * @param: AsyncCompletedEventArgs e
+     * @return: IEnumerator
      * @description: This funtion triggers both the readAudioOrVideoFile and downloadSegmentFilesAsync function with the audio parameters.
      */
-    private void M3U8AudioCallback(object sender, AsyncCompletedEventArgs e)
+    private IEnumerator downloadSegments(string filename)
     {
 
         Debug.Log("\nDownloaded:\t\t" + this.M3U8Audio);
 
-        this.readAudioOrVideoFile(out this.audioUrl, out this.audioSegment, this.M3U8Audio, "#", true);
+        List<string> lines = this.readFile(this.location + "\\M3U8s\\", filename, "#", true);
+
+        string[] segments  = lines[lines.Count - 1].Split('/');
+        int currentSegment = this.setSegment(segments[segments.Length - 1]);
+
+        string segmentUrl = this.url;
+
+        for (int i = 0; i < segments.Length - 1; i++)
+            segmentUrl += segments[i] + "/";
 
         Debug.Log("audioUrl:\t\t" + this.audioUrl + "\naudioSegment:\t\t" + this.audioSegment);
 
-        this.downloadSegmentFilesAsync(this.audioUrl, this.location + "\\audio\\", ref this.audioSegment, new AsyncCompletedEventHandler(audioSegmentCallback));
+        while (this.isRunning)
+        {
+
+            string segmentFileName = this.segmentName + currentSegment + this.segmentType;
+
+            this.downloadFileAsync(segmentUrl, this.location + "\\audio\\", segmentFileName, new AsyncCompletedEventHandler(audioSegmentCallback));
+
+            yield return new WaitForSeconds(this.sleepBetweenSegments);
+        }
+
+        Debug.Log("DownloadSegmentFileAsync loop stopped");
     }
 
     /**
