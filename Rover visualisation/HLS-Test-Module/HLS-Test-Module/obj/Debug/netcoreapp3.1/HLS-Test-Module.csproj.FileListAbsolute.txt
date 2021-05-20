@@ -1,0 +1,13 @@
+C:\Users\31638\Desktop\Avans\Periode-3.4\R&D 2\TI-MxR-Rover\Rover visualisation\HLS-Test-Module\HLS-Test-Module\bin\Debug\netcoreapp3.1\HLS-Test-Module.exe
+C:\Users\31638\Desktop\Avans\Periode-3.4\R&D 2\TI-MxR-Rover\Rover visualisation\HLS-Test-Module\HLS-Test-Module\bin\Debug\netcoreapp3.1\HLS-Test-Module.deps.json
+C:\Users\31638\Desktop\Avans\Periode-3.4\R&D 2\TI-MxR-Rover\Rover visualisation\HLS-Test-Module\HLS-Test-Module\bin\Debug\netcoreapp3.1\HLS-Test-Module.runtimeconfig.json
+C:\Users\31638\Desktop\Avans\Periode-3.4\R&D 2\TI-MxR-Rover\Rover visualisation\HLS-Test-Module\HLS-Test-Module\bin\Debug\netcoreapp3.1\HLS-Test-Module.runtimeconfig.dev.json
+C:\Users\31638\Desktop\Avans\Periode-3.4\R&D 2\TI-MxR-Rover\Rover visualisation\HLS-Test-Module\HLS-Test-Module\bin\Debug\netcoreapp3.1\HLS-Test-Module.dll
+C:\Users\31638\Desktop\Avans\Periode-3.4\R&D 2\TI-MxR-Rover\Rover visualisation\HLS-Test-Module\HLS-Test-Module\bin\Debug\netcoreapp3.1\HLS-Test-Module.pdb
+C:\Users\31638\Desktop\Avans\Periode-3.4\R&D 2\TI-MxR-Rover\Rover visualisation\HLS-Test-Module\HLS-Test-Module\obj\Debug\netcoreapp3.1\HLS-Test-Module.csprojAssemblyReference.cache
+C:\Users\31638\Desktop\Avans\Periode-3.4\R&D 2\TI-MxR-Rover\Rover visualisation\HLS-Test-Module\HLS-Test-Module\obj\Debug\netcoreapp3.1\HLS-Test-Module.AssemblyInfoInputs.cache
+C:\Users\31638\Desktop\Avans\Periode-3.4\R&D 2\TI-MxR-Rover\Rover visualisation\HLS-Test-Module\HLS-Test-Module\obj\Debug\netcoreapp3.1\HLS-Test-Module.AssemblyInfo.cs
+C:\Users\31638\Desktop\Avans\Periode-3.4\R&D 2\TI-MxR-Rover\Rover visualisation\HLS-Test-Module\HLS-Test-Module\obj\Debug\netcoreapp3.1\HLS-Test-Module.csproj.CoreCompileInputs.cache
+C:\Users\31638\Desktop\Avans\Periode-3.4\R&D 2\TI-MxR-Rover\Rover visualisation\HLS-Test-Module\HLS-Test-Module\obj\Debug\netcoreapp3.1\HLS-Test-Module.dll
+C:\Users\31638\Desktop\Avans\Periode-3.4\R&D 2\TI-MxR-Rover\Rover visualisation\HLS-Test-Module\HLS-Test-Module\obj\Debug\netcoreapp3.1\HLS-Test-Module.pdb
+C:\Users\31638\Desktop\Avans\Periode-3.4\R&D 2\TI-MxR-Rover\Rover visualisation\HLS-Test-Module\HLS-Test-Module\obj\Debug\netcoreapp3.1\HLS-Test-Module.genruntimeconfig.cache
