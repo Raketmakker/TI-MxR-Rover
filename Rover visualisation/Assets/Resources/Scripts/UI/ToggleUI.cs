@@ -9,6 +9,12 @@ public class ToggleUI : MonoBehaviour
     public SteamVR_Action_Boolean menuAction;
     public GameObject userInterface;
 
+    private void Awake()
+    {
+        if (DetectVR.VRController.none == DetectVR.GetControllerTypeToEnum())
+            this.enabled = false;
+    }
+
     private void Update()
     {
         if (this.menuAction == null)
