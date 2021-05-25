@@ -26,11 +26,12 @@ namespace HLS_Test_Module
 
         // OTHER PARAMETERS
         public  string streamName;
+        public  bool isForcedMP4;
         private bool   isRunning;
         private int    sleepBetweenSegments;
 
         // GENERAL FUNCTIONS
-        public HLSSegmentStream(string streamName, string fileName, string fileUrl, string fileLocation, int sleepBetweenSegments = 1000, bool isStandard = false)
+        public HLSSegmentStream(string streamName, string fileName, string fileUrl, string fileLocation, int sleepBetweenSegments = 1000, bool isForcedMP4 = false, bool isStandard = false)
         {
 
             this.fileName = fileName;
@@ -40,6 +41,8 @@ namespace HLS_Test_Module
             this.streamName = streamName;
             this.sleepBetweenSegments = sleepBetweenSegments;
 
+            this.isForcedMP4 = isForcedMP4;
+            
             if (isStandard)
                 this.standardStart();
         }
@@ -57,7 +60,7 @@ namespace HLS_Test_Module
         }
 
         // DOWNLOAD FILE ASYNC FUNCTIONS
-        public void downloadFile(AsyncCompletedEventHandler callback, string url = null, string name = null, string location = null)
+        public void downloadFile(AsyncCompletedEventHandler callback, string url = null, string name = null, string location = null, bool forceMP4 = false)
         {
 
             if (url == null)        url = this.fileUrl;
@@ -67,11 +70,13 @@ namespace HLS_Test_Module
             if (!Directory.Exists(location))
                  Directory.CreateDirectory(location);
 
+            string downloadName = (forceMP4 && this.isForcedMP4) ? name.Split('.')[0] + ".mp4" : name;
+
             using (WebClient WC = new WebClient())
             {
 
                 WC.DownloadFileCompleted += callback;
-                WC.DownloadFileAsync(new Uri(url + '/' + name), location + '\\' + name);
+                WC.DownloadFileAsync(new Uri(url + '/' + name), location + '\\' + downloadName);
             }
         }
 
@@ -83,7 +88,7 @@ namespace HLS_Test_Module
             while (this.isRunning)
             {
 
-                this.downloadFile(callback, url, name, location);
+                this.downloadFile(callback, url, name, location, true);
 
                 Thread.Sleep(this.sleepBetweenSegments);
             }
@@ -142,8 +147,12 @@ namespace HLS_Test_Module
             this.segmentType = segments[segments.Length - 1];
         }
 
-        private string fullSegmentName() { return (this.segmentName + this.segmentID + this.segmentType); }
+        private string fullSegmentName(bool forceMP4 = false)
+        {
 
+            return (this.segmentName + this.segmentID + (forceMP4 ? ".mp4" : this.segmentType));
+        }
+                
         // BASIC CALLBACKS
         public void standardSegmentSetupCallback(object sender, AsyncCompletedEventArgs args)
         {
@@ -169,7 +178,7 @@ namespace HLS_Test_Module
             try
             {
 
-                string location = this.fileLocation + '\\' + this.fullSegmentName();
+                string location = this.fileLocation + '\\' + this.fullSegmentName(this.isForcedMP4);
 
                 long size = new FileInfo(location).Length;
 
@@ -179,16 +188,16 @@ namespace HLS_Test_Module
                 else if (this.fileSize != 0 && size == this.fileSize)
                 {
 
-                    Console.WriteLine(this.streamName + " downloaded:\t" + this.fullSegmentName() + " with size: " + this.fileSize);
+                    Console.WriteLine(this.streamName + " downloaded:\t" + this.fullSegmentName(this.isForcedMP4) + " with size: " + this.fileSize);
 
                     this.fileSize = 0;
                     this.segmentID++;
                 }
             }
-            catch (FileNotFoundException excpetion)
+            catch (FileNotFoundException exception)
             {
 
-                Console.WriteLine(this.streamName + "'s expection:\t" + excpetion.Message);
+                Console.WriteLine(this.streamName + "'s exception:\t" + exception.FileName);
             }
         }
     }

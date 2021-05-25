@@ -18,6 +18,7 @@ namespace HLS_Test_Module
             HLS.videoResolutionIndex = 5;
             HLS.sleepBetweenSegments = 250;
             HLS.isAudioAndVideo      = false;
+            HLS.isForcedMP4          = true;
 
             HLS.start();
 

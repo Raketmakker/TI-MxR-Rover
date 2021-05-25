@@ -19,7 +19,9 @@ namespace HLS_Test_Module
         public  string firstFileName;
         public  int    videoResolutionIndex;
         public  int    sleepBetweenSegments;
+
         public  bool   isAudioAndVideo;
+        public  bool   isForcedMP4;
 
         // HLS SEGMENT STREAMS
         private List<HLSSegmentStream> streams;
@@ -28,19 +30,17 @@ namespace HLS_Test_Module
         public void start()
         {
 
+            string streamName = (this.isAudioAndVideo) ? "AudioAndVideo" : "M3U8";
+
             this.clearDirectory();
 
-            string streamName = (this.isAudioAndVideo) ? "audioAndVideo" : "M3U8";
-
-            HLSSegmentStream stream = new HLSSegmentStream(streamName, this.firstFileName, this.baseUrl, this.baseLocation, this.sleepBetweenSegments);
-            
             this.streams = new List<HLSSegmentStream>();
-            this.streams.Add(stream);
+            this.streams.Add(new HLSSegmentStream(streamName, this.firstFileName, this.baseUrl, this.baseLocation, this.sleepBetweenSegments, this.isForcedMP4));
 
             if (this.isAudioAndVideo)
-                stream.standardStart();
+                this.streams[0].standardStart();
             else
-                stream.downloadFile(new AsyncCompletedEventHandler(this.M3U8Callback));
+                this.streams[0].downloadFile(new AsyncCompletedEventHandler(this.M3U8Callback));
         }
 
         public void stop()
@@ -106,8 +106,8 @@ namespace HLS_Test_Module
             for (int i = 1; i < lines.Count; i++)
                 Console.WriteLine("videoResolutionIndex " + i + ":\t" + lines[i]);
 
-            this.streams.Add(new HLSSegmentStream("Audio", audioFile, this.baseUrl, this.baseLocation, this.sleepBetweenSegments, true));
-            this.streams.Add(new HLSSegmentStream("Video", videoFile, this.baseUrl, this.baseLocation, this.sleepBetweenSegments, true));
+            this.streams.Add(new HLSSegmentStream("Audio", audioFile, this.baseUrl, this.baseLocation, this.sleepBetweenSegments, this.isForcedMP4, true));
+            this.streams.Add(new HLSSegmentStream("Video", videoFile, this.baseUrl, this.baseLocation, this.sleepBetweenSegments, this.isForcedMP4, true));
         }
     }
 }
