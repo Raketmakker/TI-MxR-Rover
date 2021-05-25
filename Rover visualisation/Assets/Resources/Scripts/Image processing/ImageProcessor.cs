@@ -8,6 +8,7 @@ using UnityEngine.Video;
 [RequireComponent(typeof(VideoPlayer))]
 public class ImageProcessor : MonoBehaviour
 {
+    private float frameInterval;
     private List<Texture> textures;
     public float imageRecordInterval = 1;
     public delegate void ImageProcessed();
@@ -18,6 +19,7 @@ public class ImageProcessor : MonoBehaviour
         this.textures = new List<Texture>();
         VideoPlayer videoPlayer = GetComponent<VideoPlayer>();
         videoPlayer.clip = GetVideoClip(videoPlayer);
+        this.frameInterval = CalculateFrameInterval(videoPlayer);
         videoPlayer.Stop();
         videoPlayer.renderMode = VideoRenderMode.APIOnly;
         videoPlayer.prepareCompleted += (VideoPlayer source) =>
@@ -25,7 +27,7 @@ public class ImageProcessor : MonoBehaviour
             source.Pause();
         };
         videoPlayer.sendFrameReadyEvents = true;
-        videoPlayer.frameReady += ProcesImages; 
+        videoPlayer.frameReady += ParseFrame; 
         videoPlayer.Prepare();
     }
 
@@ -35,16 +37,18 @@ public class ImageProcessor : MonoBehaviour
         return videoPlayer.clip;
     }
 
-    private void ProcesImages(VideoPlayer source, long frameIndex)
+    private void ParseFrame(VideoPlayer source, long frameIndex)
     {
-        source.frameReady -= ProcesImages;
-        int interval = (int)CalculateFrameInterval(source);
-        for (int i = 0; i < (int)source.frameCount; i+= interval)
+        this.textures.Add(CopyTexture(source));
+        if(frameIndex + (long) frameInterval > (long)source.frameCount)
         {
-            this.textures.Add(CopyTexture(source));
-            source.frame = i;
+            source.frameReady -= ParseFrame;
+            SpawnTextures();
         }
-        SpawnTextures();
+        else
+        {
+            source.frame = frameIndex + (long)frameInterval;
+        }
     }
 
     private float CalculateFrameInterval(VideoPlayer source)
@@ -66,11 +70,10 @@ public class ImageProcessor : MonoBehaviour
         {
             var cube = GameObject.CreatePrimitive(PrimitiveType.Plane);
             MeshRenderer renderer = cube.GetComponent<MeshRenderer>();
-            var mat = renderer.material;
-            Material newMat = new Material(mat);
+            Material newMat = new Material(renderer.material);
             newMat.mainTexture = textures[i];
             renderer.material = newMat;
-            cube.transform.position =new Vector3(i * 10, 0, 0);
+            cube.transform.position = new Vector3(i * 10, 0, 0);
         }
     }
 }
