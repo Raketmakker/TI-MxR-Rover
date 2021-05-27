@@ -9,14 +9,17 @@ using UnityEngine.Video;
 public class ImageProcessor : MonoBehaviour
 {
     private float frameInterval;
-    private List<Texture> textures;
+    private List<Texture2D> origialTextures;
+    [Range(1, 100)]
+    public int pixelSkips = 100;
     public float imageRecordInterval = 1;
-    public delegate void ImageProcessed();
-    public event ImageProcessed OnImageProcessed;
+    [Range(0.0f, 1.0f)]
+    public float minimumDifference = 0.3f;
+    public List<Texture2D> testList = new List<Texture2D>();
 
-    void Start()
+    async void Start()
     {
-        this.textures = new List<Texture>();
+        this.origialTextures = new List<Texture2D>();
         VideoPlayer videoPlayer = GetComponent<VideoPlayer>();
         videoPlayer.clip = GetVideoClip(videoPlayer);
         this.frameInterval = CalculateFrameInterval(videoPlayer);
@@ -27,8 +30,18 @@ public class ImageProcessor : MonoBehaviour
             source.Pause();
         };
         videoPlayer.sendFrameReadyEvents = true;
-        videoPlayer.frameReady += ParseFrame; 
+        videoPlayer.frameReady += ParseFrame;
         videoPlayer.Prepare();
+
+        //this.origialTextures.Add(testList[0]);
+        //for (int i = 1; i < testList.Count; i++)
+        //{
+        //    if (await CompareTextures(testList[i]))
+        //    {
+        //        origialTextures.Add(testList[i]);
+        //    }
+        //}
+        //SpawnTextures(origialTextures);
     }
 
     //TODO get the videoclip
@@ -37,18 +50,19 @@ public class ImageProcessor : MonoBehaviour
         return videoPlayer.clip;
     }
 
-    private void ParseFrame(VideoPlayer source, long frameIndex)
+    private async void ParseFrame(VideoPlayer source, long frameIndex)
     {
-        this.textures.Add(CopyTexture(source));
-        if(frameIndex + (long) frameInterval > (long)source.frameCount)
-        {
-            source.frameReady -= ParseFrame;
-            SpawnTextures();
-        }
-        else
+        Texture2D clonedTex = CopyTexture(source);
+        bool originalPicture = this.origialTextures.Count == 0 ? true : await CompareTextures(clonedTex);
+        if(originalPicture)
+            this.origialTextures.Add(clonedTex);
+        if(frameIndex + (long) frameInterval < (long)source.frameCount)
         {
             source.frame = frameIndex + (long)frameInterval;
+            return;
         }
+        source.frameReady -= ParseFrame;        
+        SpawnTextures(this.origialTextures);
     }
 
     private float CalculateFrameInterval(VideoPlayer source)
@@ -56,14 +70,56 @@ public class ImageProcessor : MonoBehaviour
         return (float)source.clip.frameRate * this.imageRecordInterval;
     }
 
-    private Texture CopyTexture(VideoPlayer source)
+    private Texture2D CopyTexture(VideoPlayer source)
     {
-        Texture tex = new Texture2D(source.texture.width, source.texture.height, TextureFormat.ARGB32, false);
-        Graphics.CopyTexture(source.texture, tex);
-        return tex;
+        Texture2D clonedTexture = new Texture2D(source.texture.width, source.texture.height, TextureFormat.RGBA32, false);
+        RenderTexture currentRT = RenderTexture.active;
+        RenderTexture renderTexture = new RenderTexture(source.texture.width, source.texture.height, 32);
+        Graphics.Blit(source.texture, renderTexture);
+        RenderTexture.active = renderTexture;
+        clonedTexture.ReadPixels(new Rect(0, 0, renderTexture.width, renderTexture.height), 0, 0);
+        clonedTexture.Apply();
+        RenderTexture.active = currentRT;
+        return clonedTexture;
     }
 
-    public void SpawnTextures()
+    private async Task<bool> CompareTextures(Texture2D texToCompare)
+    {
+        var tasks = new List<Task<bool>>();
+        foreach(Texture2D originalTex in this.origialTextures)
+        {
+            tasks.Add(CompareTextureAsync(originalTex, texToCompare));
+        }
+        bool[] originals = await Task.WhenAll(tasks);
+        foreach (bool value in originals)
+        {
+            if(value == false)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    //Compares grey value per pixel. Returns true if its a different picture
+    private async Task<bool> CompareTextureAsync(Texture2D originalTex, Texture2D texToCompare)
+    {
+        int differenceCounter = 0;
+        Color32[] originalColors = originalTex.GetPixels32();
+        Color32[] colorsToCompare = texToCompare.GetPixels32();
+
+        for (int i = 0; i < originalTex.width * originalTex.height; i += pixelSkips)
+        {
+            differenceCounter += Mathf.Abs(originalColors[i].r - colorsToCompare[i].r);
+            differenceCounter += Mathf.Abs(originalColors[i].g - colorsToCompare[i].g);
+            differenceCounter += Mathf.Abs(originalColors[i].b - colorsToCompare[i].b);
+        }
+        float threashold =  minimumDifference * ((originalTex.width * originalTex.height) / pixelSkips) * 3 * 255;
+        Debug.Log("Is original: " + (differenceCounter > threashold) + ". Difference counter: " + differenceCounter + ". Theashold: " + threashold);
+        return differenceCounter > threashold;
+    }
+
+    private void SpawnTextures(List<Texture2D> textures)
     {
         Debug.LogWarning("ImageProcessor.SpawnTextures has to be removed!");
         for (int i = 0; i < textures.Count; i++)
