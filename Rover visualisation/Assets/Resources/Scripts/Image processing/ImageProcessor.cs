@@ -8,14 +8,14 @@ using UnityEngine.Video;
 [RequireComponent(typeof(VideoPlayer))]
 public class ImageProcessor : MonoBehaviour
 {
+    private System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
     private float frameInterval;
     private List<Texture2D> origialTextures;
     [Range(1, 100)]
-    public int pixelSkips = 100;
+    public int pixelIncrement = 100;
     public float imageRecordInterval = 1;
     [Range(0.0f, 1.0f)]
     public float minimumDifference = 0.3f;
-    public List<Texture2D> testList = new List<Texture2D>();
 
     async void Start()
     {
@@ -32,21 +32,12 @@ public class ImageProcessor : MonoBehaviour
         videoPlayer.sendFrameReadyEvents = true;
         videoPlayer.frameReady += ParseFrame;
         videoPlayer.Prepare();
-
-        //this.origialTextures.Add(testList[0]);
-        //for (int i = 1; i < testList.Count; i++)
-        //{
-        //    if (await CompareTextures(testList[i]))
-        //    {
-        //        origialTextures.Add(testList[i]);
-        //    }
-        //}
-        //SpawnTextures(origialTextures);
     }
 
     //TODO get the videoclip
     private VideoClip GetVideoClip(VideoPlayer videoPlayer)
     {
+        stopwatch.Start();
         return videoPlayer.clip;
     }
 
@@ -61,7 +52,9 @@ public class ImageProcessor : MonoBehaviour
             source.frame = frameIndex + (long)frameInterval;
             return;
         }
-        source.frameReady -= ParseFrame;        
+        source.frameReady -= ParseFrame;
+        stopwatch.Stop();
+        Debug.Log("Parsed images in: " + stopwatch.Elapsed.TotalSeconds.ToString() + " seconds");
         SpawnTextures(this.origialTextures);
     }
 
@@ -108,14 +101,13 @@ public class ImageProcessor : MonoBehaviour
         Color32[] originalColors = originalTex.GetPixels32();
         Color32[] colorsToCompare = texToCompare.GetPixels32();
 
-        for (int i = 0; i < originalTex.width * originalTex.height; i += pixelSkips)
+        for (int i = 0; i < originalTex.width * originalTex.height; i += pixelIncrement)
         {
             differenceCounter += Mathf.Abs(originalColors[i].r - colorsToCompare[i].r);
             differenceCounter += Mathf.Abs(originalColors[i].g - colorsToCompare[i].g);
             differenceCounter += Mathf.Abs(originalColors[i].b - colorsToCompare[i].b);
         }
-        float threashold =  minimumDifference * ((originalTex.width * originalTex.height) / pixelSkips) * 3 * 255;
-        Debug.Log("Is original: " + (differenceCounter > threashold) + ". Difference counter: " + differenceCounter + ". Theashold: " + threashold);
+        float threashold =  minimumDifference * ((originalTex.width * originalTex.height) / pixelIncrement) * 3 * 255;
         return differenceCounter > threashold;
     }
 
