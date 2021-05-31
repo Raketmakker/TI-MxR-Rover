@@ -9,8 +9,8 @@ using UnityEngine.Video;
 public class ImageProcessor : MonoBehaviour
 {
     private System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
+    private Dictionary<Texture2D, Color32[]> textureColors;
     private float frameInterval;
-    private List<Texture2D> origialTextures;
     [Range(1, 100)]
     public int pixelIncrement = 100;
     public float imageRecordInterval = 1;
@@ -19,7 +19,7 @@ public class ImageProcessor : MonoBehaviour
 
     async void Start()
     {
-        this.origialTextures = new List<Texture2D>();
+        this.textureColors = new Dictionary<Texture2D, Color32[]>();
         VideoPlayer videoPlayer = GetComponent<VideoPlayer>();
         videoPlayer.clip = GetVideoClip(videoPlayer);
         this.frameInterval = CalculateFrameInterval(videoPlayer);
@@ -44,18 +44,23 @@ public class ImageProcessor : MonoBehaviour
     private async void ParseFrame(VideoPlayer source, long frameIndex)
     {
         Texture2D clonedTex = CopyTexture(source);
-        bool originalPicture = this.origialTextures.Count == 0 ? true : await CompareTextures(clonedTex);
-        if(originalPicture)
-            this.origialTextures.Add(clonedTex);
+        if(this.textureColors.Count == 0)
+        {
+            this.textureColors.Add(clonedTex, clonedTex.GetPixels32());
+        }
+        else
+        {
+            CompareTextures(clonedTex);
+        }
         if(frameIndex + (long) frameInterval < (long)source.frameCount)
         {
             source.frame = frameIndex + (long)frameInterval;
             return;
         }
-        source.frameReady -= ParseFrame;
         stopwatch.Stop();
+        source.frameReady -= ParseFrame;
         Debug.Log("Parsed images in: " + stopwatch.Elapsed.TotalSeconds.ToString() + " seconds");
-        SpawnTextures(this.origialTextures);
+        SpawnTextures(new List<Texture2D>(textureColors.Keys));
     }
 
     private float CalculateFrameInterval(VideoPlayer source)
@@ -76,38 +81,37 @@ public class ImageProcessor : MonoBehaviour
         return clonedTexture;
     }
 
-    private async Task<bool> CompareTextures(Texture2D texToCompare)
+    private async void CompareTextures(Texture2D texToCompare)
     {
         var tasks = new List<Task<bool>>();
-        foreach(Texture2D originalTex in this.origialTextures)
+        Color32[] colorsToCompare = texToCompare.GetPixels32();
+
+        foreach (Color32[] originalColor in this.textureColors.Values)
         {
-            tasks.Add(CompareTextureAsync(originalTex, texToCompare));
+            tasks.Add(CompareImageAsync(originalColor, colorsToCompare));
         }
         bool[] originals = await Task.WhenAll(tasks);
         foreach (bool value in originals)
         {
             if(value == false)
             {
-                return false;
+                return;
             }
         }
-        return true;
+        this.textureColors.Add(texToCompare, colorsToCompare);
     }
 
     //Compares grey value per pixel. Returns true if its a different picture
-    private async Task<bool> CompareTextureAsync(Texture2D originalTex, Texture2D texToCompare)
+    private async Task<bool> CompareImageAsync(Color32[] originalColors, Color32[] colorsToCompare)
     {
         int differenceCounter = 0;
-        Color32[] originalColors = originalTex.GetPixels32();
-        Color32[] colorsToCompare = texToCompare.GetPixels32();
-
-        for (int i = 0; i < originalTex.width * originalTex.height; i += pixelIncrement)
+        for (int i = 0; i < originalColors.Length; i += pixelIncrement)
         {
             differenceCounter += Mathf.Abs(originalColors[i].r - colorsToCompare[i].r);
             differenceCounter += Mathf.Abs(originalColors[i].g - colorsToCompare[i].g);
             differenceCounter += Mathf.Abs(originalColors[i].b - colorsToCompare[i].b);
         }
-        float threashold =  minimumDifference * ((originalTex.width * originalTex.height) / pixelIncrement) * 3 * 255;
+        float threashold =  minimumDifference * (originalColors.Length / pixelIncrement) * 3 * 255;
         return differenceCounter > threashold;
     }
 
