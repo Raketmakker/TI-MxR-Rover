@@ -282,14 +282,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 021d37d4aee760c4799c9088677f4576, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pixelSkips: 100
+  pixelIncrement: 10
   imageRecordInterval: 1
   minimumDifference: 0.15
-  testList:
-  - {fileID: 2800000, guid: a696902560cd1ac40a99e8d3a4ae95f8, type: 3}
-  - {fileID: 2800000, guid: a696902560cd1ac40a99e8d3a4ae95f8, type: 3}
-  - {fileID: 2800000, guid: 89486f98f2e72b541a61d6d544aa68fd, type: 3}
-  - {fileID: 2800000, guid: 89486f98f2e72b541a61d6d544aa68fd, type: 3}
 --- !u!1 &1904919887
 GameObject:
   m_ObjectHideFlags: 0

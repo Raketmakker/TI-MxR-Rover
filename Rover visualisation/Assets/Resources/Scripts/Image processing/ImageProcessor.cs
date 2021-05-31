@@ -11,23 +11,28 @@ public class ImageProcessor : MonoBehaviour
     private System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
     private Dictionary<Texture2D, Color32[]> textureColors;
     private float frameInterval;
+    private RenderTexture renderTexture;
     [Range(1, 100)]
     public int pixelIncrement = 100;
     public float imageRecordInterval = 1;
     [Range(0.0f, 1.0f)]
     public float minimumDifference = 0.3f;
 
+
     async void Start()
     {
         this.textureColors = new Dictionary<Texture2D, Color32[]>();
         VideoPlayer videoPlayer = GetComponent<VideoPlayer>();
         videoPlayer.clip = GetVideoClip(videoPlayer);
+
         this.frameInterval = CalculateFrameInterval(videoPlayer);
         videoPlayer.Stop();
         videoPlayer.renderMode = VideoRenderMode.APIOnly;
         videoPlayer.prepareCompleted += (VideoPlayer source) =>
         {
             source.Pause();
+            renderTexture = new RenderTexture(videoPlayer.texture.width, videoPlayer.texture.height, 32);
+
         };
         videoPlayer.sendFrameReadyEvents = true;
         videoPlayer.frameReady += ParseFrame;
@@ -71,13 +76,12 @@ public class ImageProcessor : MonoBehaviour
     private Texture2D CopyTexture(VideoPlayer source)
     {
         Texture2D clonedTexture = new Texture2D(source.texture.width, source.texture.height, TextureFormat.RGBA32, false);
-        RenderTexture currentRT = RenderTexture.active;
-        RenderTexture renderTexture = new RenderTexture(source.texture.width, source.texture.height, 32);
+        //RenderTexture currentRT = RenderTexture.active;
         Graphics.Blit(source.texture, renderTexture);
-        RenderTexture.active = renderTexture;
+        //RenderTexture.active = renderTexture;
         clonedTexture.ReadPixels(new Rect(0, 0, renderTexture.width, renderTexture.height), 0, 0);
         clonedTexture.Apply();
-        RenderTexture.active = currentRT;
+        //RenderTexture.active = currentRT;
         return clonedTexture;
     }
 
@@ -108,11 +112,11 @@ public class ImageProcessor : MonoBehaviour
         for (int i = 0; i < originalColors.Length; i += pixelIncrement)
         {
             differenceCounter += Mathf.Abs(originalColors[i].r - colorsToCompare[i].r);
-            differenceCounter += Mathf.Abs(originalColors[i].g - colorsToCompare[i].g);
-            differenceCounter += Mathf.Abs(originalColors[i].b - colorsToCompare[i].b);
+            //differenceCounter += Mathf.Abs(originalColors[i].g - colorsToCompare[i].g);
+            //differenceCounter += Mathf.Abs(originalColors[i].b - colorsToCompare[i].b);
         }
-        float threashold =  minimumDifference * (originalColors.Length / pixelIncrement) * 3 * 255;
-        return differenceCounter > threashold;
+        float threshold =  minimumDifference * (originalColors.Length / pixelIncrement) * 1 * 255;
+        return differenceCounter > threshold;
     }
 
     private void SpawnTextures(List<Texture2D> textures)
