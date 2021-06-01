@@ -76,12 +76,9 @@ public class ImageProcessor : MonoBehaviour
     private Texture2D CopyTexture(VideoPlayer source)
     {
         Texture2D clonedTexture = new Texture2D(source.texture.width, source.texture.height, TextureFormat.RGBA32, false);
-        //RenderTexture currentRT = RenderTexture.active;
         Graphics.Blit(source.texture, renderTexture);
-        //RenderTexture.active = renderTexture;
         clonedTexture.ReadPixels(new Rect(0, 0, renderTexture.width, renderTexture.height), 0, 0);
         clonedTexture.Apply();
-        //RenderTexture.active = currentRT;
         return clonedTexture;
     }
 
