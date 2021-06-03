@@ -2,16 +2,52 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Valve.VR;
 
 public class SkyboxController : MonoBehaviour
 {
     private List<Material> images;
+    private int imageIndex = 0;
     public ImageProcessor imageProcessor;
     public Material baseMaterial;
+    public SteamVR_Action_Vector2 joystickAction;
+    public float threashold = 0.1f;
 
     private void Awake()
     {
         this.imageProcessor.OnFinishedParsing += OnFinishedParsing;
+    }
+
+    /// <summary>
+    /// Reads the controller input every frame
+    /// </summary>
+    void Update()
+    {
+        if (DetectVR.VRController.none == DetectVR.GetControllerTypeToEnum())
+        {
+            float value = Input.GetKeyUp(KeyCode.Keypad6) ? 1 : Input.GetKeyUp(KeyCode.Keypad4) ? -1 : 0;
+            NextImage(value);
+        }
+        else
+            NextImage(joystickAction.GetAxis(SteamVR_Input_Sources.Any).x);
+    }
+
+    /// <summary>
+    /// Sets the next image in the skybox
+    /// </summary>
+    /// <param name="value"> The joystick input, positive for next image, negative for previous. </param>
+    private void NextImage(float value)
+    {
+        if(value > this.threashold)
+        {
+            this.imageIndex = Mathf.Clamp(this.imageIndex + 1, 0, this.images.Count - 1);
+            RenderSettings.skybox = this.images[this.imageIndex];
+        }
+        if (value < -this.threashold)
+        {
+            this.imageIndex = Mathf.Clamp(this.imageIndex - 1, 0, this.images.Count - 1);
+            RenderSettings.skybox = this.images[this.imageIndex];
+        }
     }
 
     /// <summary>
@@ -38,6 +74,6 @@ public class SkyboxController : MonoBehaviour
             mat.mainTexture = tex;
             this.images.Add(mat);
         }
-        RenderSettings.skybox = this.images[0];
+        RenderSettings.skybox = this.images[this.imageIndex];
     }
 }

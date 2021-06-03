@@ -788,6 +788,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   imageProcessor: {fileID: 549258195}
   baseMaterial: {fileID: 2100000, guid: f723bfba37649d0419b243fffc6564c9, type: 2}
+  joystickAction:
+    actionPath: 
+    needsReinit: 0
+  threashold: 0.1
 --- !u!1 &1747965617
 GameObject:
   m_ObjectHideFlags: 0
