@@ -18,6 +18,7 @@ public class ImageProcessor : MonoBehaviour
     public string dataTag = "Data";
     public Dictionary<Texture2D, Color32[]> textureColors;
     public event EventHandler<float> OnImageProgress;
+    public event EventHandler OnFinishedParsing;
 
     /// <summary>
     /// Prepares the videoplayer for image extraction.
@@ -88,9 +89,8 @@ public class ImageProcessor : MonoBehaviour
         if(frameIndex + (long) frameInterval > (long)source.frameCount)
         {
             source.frameReady -= ParseFrame;
-            //Signal event listeners by sending 1.0f that the process is completed.
-            OnImageProgress?.Invoke(this, 1.0f);
-            SpawnTextures(new List<Texture2D>(textureColors.Keys));
+            OnFinishedParsing?.Invoke(this, null);
+            Destroy(this.gameObject);
         }
         else
         {
@@ -167,19 +167,5 @@ public class ImageProcessor : MonoBehaviour
         (originalColors.Length / pixelIncrement) * max difference per pixel (255); */
         float threshold =  minimumDifference * (originalColors.Length / pixelIncrement) * 255;
         return differenceCounter > threshold;
-    }
-
-    private void SpawnTextures(List<Texture2D> textures)
-    {
-        Debug.LogWarning("ImageProcessor.SpawnTextures has to be removed!");
-        for (int i = 0; i < textures.Count; i++)
-        {
-            var cube = GameObject.CreatePrimitive(PrimitiveType.Plane);
-            MeshRenderer renderer = cube.GetComponent<MeshRenderer>();
-            Material newMat = new Material(renderer.material);
-            newMat.mainTexture = textures[i];
-            renderer.material = newMat;
-            cube.transform.position = new Vector3(i * 10, 0, 0);
-        }
     }
 }
