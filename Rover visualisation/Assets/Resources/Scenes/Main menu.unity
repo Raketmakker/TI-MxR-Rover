@@ -2909,7 +2909,7 @@ MonoBehaviour:
   type: 1
   minimum: 1
   maximum: 100
-  defaultValue: 1
+  defaultValue: 50
 --- !u!1001 &830256996
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5157,7 +5157,7 @@ MonoBehaviour:
   type: 0
   minimum: 0
   maximum: 1
-  defaultValue: 0.3
+  defaultValue: 0.09
 --- !u!224 &1459484634 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 7830373833807737857, guid: e71f26e040fb550468b3aa96d4eb1c07,

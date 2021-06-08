@@ -10,11 +10,9 @@ public class ImageProcessor : MonoBehaviour
 {
     private float frameInterval;
     private RenderTexture renderTexture;
-    [Range(1, 100)]
-    public int pixelIncrement = 100;
-    public float imageRecordInterval = 1;
-    [Range(0.0f, 1.0f)]
-    public float minimumDifference = 0.3f;
+    private int pixelIncrement = 50;
+    private float imageRecordInterval = 1;
+    private float minimumDifference = 0.09f;
     public string dataTag = "Data";
     public Dictionary<Texture2D, Color32[]> textureColors;
     public event EventHandler<float> OnImageProgress;
@@ -28,6 +26,7 @@ public class ImageProcessor : MonoBehaviour
     /// </summary>
     async void Start()
     {
+        LoadSettings();
         this.textureColors = new Dictionary<Texture2D, Color32[]>();
         VideoPlayer videoPlayer = GetComponent<VideoPlayer>();
         if (!SetVideoPath(ref videoPlayer))
@@ -51,6 +50,20 @@ public class ImageProcessor : MonoBehaviour
         OnImageProgress += (object o, float v) => Debug.Log("Parsing: " + (v * 100) + "%");
         OnFinishedParsing += (object o, EventArgs e) => Debug.Log("Finished parsing");
 #endif
+    }
+
+    /// <summary>
+    /// Load the settings from the player preferences. 
+    /// The default perf settings are found in the main menu ui.
+    /// </summary>
+    private void LoadSettings()
+    {
+        if(PlayerPrefs.HasKey(Config.PerfKeys.pixelIncrement.ToString()))
+            this.pixelIncrement = PlayerPrefs.GetInt(Config.PerfKeys.pixelIncrement.ToString());
+        if (PlayerPrefs.HasKey(Config.PerfKeys.minimumDifference.ToString()))
+            this.minimumDifference = PlayerPrefs.GetFloat(Config.PerfKeys.minimumDifference.ToString());
+        if (PlayerPrefs.HasKey(Config.PerfKeys.imageRecordInterval.ToString()))
+            this.imageRecordInterval = PlayerPrefs.GetFloat(Config.PerfKeys.imageRecordInterval.ToString());
     }
 
     /// <summary>
