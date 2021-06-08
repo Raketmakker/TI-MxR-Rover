@@ -495,12 +495,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 006f6d99012e22c45b67d8e7477ed6be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  location: Assets/Resources/Scripts/HLS/HLSDownloads
-  url: https://bitmovin-a.akamaihd.net/content/MI201109210084_1/m3u8s/
-  M3U8File: f08e80da-bf1d-4e3d-8899-f0f6155f6efa.m3u8
-  M3U8VideoIndex: 5
-  sleepBetweenSegments: 0
-  isAudioAndVideo: 0
+  HLSStreamType: 7
+  baseUrl: https://bitmovin-a.akamaihd.net/content/MI201109210084_1/m3u8s
+  baseFilename: f08e80da-bf1d-4e3d-8899-f0f6155f6efa.m3u8
+  basePath: 
+  forcedSegmentExtension: mp4
+  videoResolutionIndex: 5
+  sleepBetweenCommands: 250
 --- !u!1 &772921021
 GameObject:
   m_ObjectHideFlags: 0
