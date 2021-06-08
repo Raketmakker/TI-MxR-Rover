@@ -49,6 +49,7 @@ public class ImageProcessor : MonoBehaviour
 
 #if UNITY_EDITOR
         OnImageProgress += (object o, float v) => Debug.Log("Parsing: " + (v * 100) + "%");
+        OnFinishedParsing += (object o, EventArgs e) => Debug.Log("Finished parsing");
 #endif
     }
 

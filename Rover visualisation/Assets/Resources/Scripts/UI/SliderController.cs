@@ -8,6 +8,8 @@ public class SliderController : MonoBehaviour
 {
     public ImageProcessor imageProcessor;
     public Slider slider;
+    public UiNode uiNode;
+    public int nodeIndex;
 
     private void Awake()
     {
@@ -19,6 +21,7 @@ public class SliderController : MonoBehaviour
     {
         this.imageProcessor.OnImageProgress -= OnImageProgress;
         this.imageProcessor.OnFinishedParsing -= OnFinishedParsing;
+        this.uiNode.SelectNode(this.nodeIndex);
     }
 
     private void OnImageProgress(object sender, float progress)
