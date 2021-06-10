@@ -20,6 +20,8 @@ namespace Assets.Resources.Scripts.HLS
 
         public int index;
 
+        public EventHandler<HLSInfo> onSegmentReady;
+
         public HLSInfo(HLSInfo info = null)
         {
 
@@ -36,9 +38,25 @@ namespace Assets.Resources.Scripts.HLS
                 this.extensionForced    = info.extensionForced;
 
                 this.index              = info.index;
+                this.onSegmentReady     = info.onSegmentReady;
             }
         }
 
-        public string getCombinedFilename() { return (this.filename + this.index + this.extension); }
+        public string getCombinedFilename()
+        {
+
+            return (this.filename + this.index + this.extension);
+        }
+
+        public string getCombinedForcedFilename()
+        {
+
+            string forcedFilename = this.getCombinedFilename();
+
+            if (this.extensionForced != null)
+                 forcedFilename = HLSHelper.getInstance().replaceExtension(forcedFilename, this.extensionForced);
+
+            return forcedFilename;
+        }
     }
 }

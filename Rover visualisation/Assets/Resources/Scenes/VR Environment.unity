@@ -443,7 +443,7 @@ VideoPlayer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 708733304}
   m_Enabled: 1
-  m_VideoClip: {fileID: 32900000, guid: b6658fd45b96f414aa53d29f069c9529, type: 3}
+  m_VideoClip: {fileID: 0}
   m_TargetCameraAlpha: 1
   m_TargetCamera3DLayout: 0
   m_TargetCamera: {fileID: 0}
@@ -492,12 +492,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 708733304}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 006f6d99012e22c45b67d8e7477ed6be, type: 3}
+  m_Script: {fileID: 11500000, guid: 2495278ad6718114b8028e48f4fbdd47, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  HLSStreamType: 7
-  baseUrl: https://bitmovin-a.akamaihd.net/content/MI201109210084_1/m3u8s
-  baseFilename: f08e80da-bf1d-4e3d-8899-f0f6155f6efa.m3u8
+  videoPlayer: {fileID: 708733305}
+  HLSStreamType: 3
+  baseUrl: http://192.168.68.235:8080/hls/
+  baseFilename: test2.m3u8
   basePath: 
   forcedSegmentExtension: mp4
   videoResolutionIndex: 5

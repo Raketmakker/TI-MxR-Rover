@@ -22,17 +22,12 @@ namespace Assets.Resources.Scripts.HLS.Command
 
             HLSHelper helper = HLSHelper.getInstance();
 
-            string downloadFilename = null;
-            
-            if (this.info.extensionForced != null) 
-                downloadFilename = helper.replaceExtension(this.info.getCombinedFilename(), this.info.extensionForced);
-
             helper.downloadFileAsync(
                 new AsyncCompletedEventHandler(this.callback),
                 this.info.url,
                 this.info.getCombinedFilename(),
                 this.info.path,
-                downloadFilename
+                this.info.getCombinedForcedFilename()
             );
         }
 
@@ -44,13 +39,15 @@ namespace Assets.Resources.Scripts.HLS.Command
 
             HLSHelper helper = HLSHelper.getInstance();
 
-            long size = helper.getFileSize(this.info.filename, this.info.path);
+            long size = helper.getFileSize(this.info.getCombinedForcedFilename(), this.info.path);
 
             if (helper.isDownloaded(this.info.filename, this.info.path, size, this.fileSize))
             {
+                
+                this.info.onSegmentReady?.Invoke(null, this.info);
 
-                this.info.index += 1;
                 this.fileSize = 0;
+                this.info.index += 1;
             }
             else
                 this.fileSize = size;

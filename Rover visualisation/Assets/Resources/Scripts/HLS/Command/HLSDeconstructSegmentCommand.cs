@@ -21,21 +21,26 @@ namespace Assets.Resources.Scripts.HLS.Command
 
             List<string> lines      = helper.searchFileForLines(this.info.filename, this.info.path, "#", false);
             string[] lineParts      = lines[lines.Count - 1].Split('/');
+            string[] nameParts      = lineParts[lineParts.Length - 1].Split('.');
 
-            string digit = "", name = "";
+            string digit = "";
 
-            foreach (char c in lineParts[lineParts.Length - 1])
+            for (int i = nameParts[0].Length - 1; i >= 0; i--)
             {
 
-                name  += (Char.IsDigit(c) ? '#' : c);
-                digit += (Char.IsDigit(c) ? c : ' ');
+                if (Char.IsDigit(nameParts[0][i]))
+                    digit = (nameParts[0][i] + digit);
+                else
+                {
+
+                    nameParts[0] = nameParts[0].Substring(0, i + 1);
+                    break;
+                }
             }
 
-            string[] nameParts      = name.Split('#');
-
-            segmentInfo.filename    = nameParts[0];
-            segmentInfo.extension   = nameParts[nameParts.Length - 1];
-            segmentInfo.index       = Int32.Parse(digit);
+            segmentInfo.filename    =       nameParts[0];
+            segmentInfo.extension   = '.' + nameParts[nameParts.Length - 1];
+            segmentInfo.index       =       Int32.Parse(digit);
 
             for (int i = 0; i < lineParts.Length - 1; i++)
                 segmentInfo.url += ('/' + lineParts[i]);

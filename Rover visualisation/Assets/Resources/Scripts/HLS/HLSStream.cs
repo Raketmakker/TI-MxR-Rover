@@ -9,24 +9,25 @@ using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 
-class HLSStream : MonoBehaviour
+public class HLSStream : MonoBehaviour
 {
 
     // Unity Attributes
-    public HLSType  HLSStreamType;
-    public string   baseUrl;
-    public string   baseFilename;
-    public string   basePath;
-    public string   forcedSegmentExtension;
-    public int      videoResolutionIndex;
-    public int      sleepBetweenCommands;
+    public EventHandler<HLSInfo> onSegmentReady;
+    public HLSType               HLSStreamType;
+    public string                baseUrl;
+    public string                baseFilename;
+    public string                basePath;
+    public string                forcedSegmentExtension;
+    public int                   videoResolutionIndex;
+    public int                   sleepBetweenCommands;
 
     /**
         * @functions: Unity functions
         * @description: These functions are used by unity to startup the HLS stream.
         */
-    void Start()     { this.start(); }
-    void OnDestroy() { this.stop();  }
+    public void Start()     { this.start(); }
+    public void OnDestroy() { this.stop();  }
 
     // Private attributes
     private Thread  HLSCommandThread;
@@ -42,6 +43,13 @@ class HLSStream : MonoBehaviour
 
         commands = new List<HLSCommand>();
 
+        if (this.basePath == "")
+            this.basePath = Environment.GetFolderPath(Environment.SpecialFolder.MyVideos);
+        
+        HLSHelper.getInstance().clearPath(this.basePath);
+
+        this.basePath += "\\HLSDownloads"; // Added here for preventive measure in .clearPath().
+
         // turns the unity paramters to a Info class
         HLSInfo info         = new HLSInfo();
         info.type            = this.HLSStreamType;
@@ -50,13 +58,7 @@ class HLSStream : MonoBehaviour
         info.path            = this.basePath;
         info.extensionForced = this.forcedSegmentExtension;
         info.index           = this.videoResolutionIndex;
-
-        if (info.path == "")
-            info.path = Environment.GetFolderPath(Environment.SpecialFolder.MyVideos);
-
-        HLSHelper.getInstance().clearPath(info.path);
-
-        info.path += "\\HLSDownloads"; // Added here for preventive measure in .clearPath().
+        info.onSegmentReady  = this.onSegmentReady;
 
         addCommand(new HLSDownloadM3U8Command(info));
 
@@ -71,6 +73,8 @@ class HLSStream : MonoBehaviour
 
         try                             { this.HLSCommandThread.Abort();                } 
         catch (ThreadAbortException e)  { Debug.Log("HLSStream Stopped: " + e.Message); }
+
+        commands = null;
     }
 
     // Loop
