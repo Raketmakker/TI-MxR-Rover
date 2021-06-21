@@ -8,6 +8,7 @@ public static class Config
     { 
         pixelIncrement, 
         imageRecordInterval, 
-        minimumDifference 
+        minimumDifference,
+        livestreamAdres
     }
 }

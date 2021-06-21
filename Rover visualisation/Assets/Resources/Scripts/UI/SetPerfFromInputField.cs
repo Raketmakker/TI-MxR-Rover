@@ -7,7 +7,7 @@ public class SetPerfFromInputField : MonoBehaviour
 {
     public Config.PerfKeys key;
     public InputField text;
-    public enum DataType { @float, @int }
+    public enum DataType { @float, @int, @string }
     public DataType type;
     public float minimum = 1;
     public float maximum = 100;
@@ -55,6 +55,25 @@ public class SetPerfFromInputField : MonoBehaviour
                     }
                 }
                 break;
+            case DataType.@string:
+                if (PlayerPrefs.HasKey(this.key.ToString()))
+                {
+                    this.text.text = PlayerPrefs.GetString(this.key.ToString()) + "";
+                }
+                else
+                {
+                    int iValue;
+                    if (int.TryParse(this.defaultValue, out iValue))
+                    {
+                        this.text.text = this.defaultValue;
+                        PlayerPrefs.GetString(this.key.ToString(), this.defaultValue);
+                        PlayerPrefs.Save();
+#if UNITY_EDITOR
+                        Debug.Log("Saved string");
+#endif
+                    }
+                }
+                break;
         }
     }
 
@@ -83,6 +102,13 @@ public class SetPerfFromInputField : MonoBehaviour
                     Debug.Log("Saved int");
 #endif
                 }
+                break;
+            case DataType.@string:
+                PlayerPrefs.SetString(this.key.ToString(), this.text.text);
+                PlayerPrefs.Save();
+#if UNITY_EDITOR
+                    Debug.Log("Saved string");
+#endif
                 break;
         }
     }
