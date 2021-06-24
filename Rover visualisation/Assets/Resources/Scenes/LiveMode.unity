@@ -1933,8 +1933,8 @@ MonoBehaviour:
     preferredFilters: []
     audioOutput: 0
     audio360ChannelMode: 0
-    startWithHighestBitrate: 0
-    useLowLiveLatency: 0
+    startWithHighestBitrate: 1
+    useLowLiveLatency: 1
     parallelFrameCount: 3
     prerollFrameCount: 4
     useUnityAudio: 0
