@@ -268,7 +268,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 4 - not assigned
+  m_Text: 
 --- !u!222 &46664736
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1697,7 +1697,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 5 - open SteamVR
+  m_Text: 
 --- !u!222 &568727355
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3544,7 +3544,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 4 - submit in menu
+  m_Text: 
 --- !u!222 &1098640656
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -4612,7 +4612,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 2 - not assigned
+  m_Text: 1 left - look left
 --- !u!222 &1390234333
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -4690,7 +4690,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 1 - not assigned
+  m_Text: 1 left - previous image
 --- !u!222 &1406370827
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -5237,7 +5237,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 3 - not assigned
+  m_Text: 
 --- !u!222 &1539010044
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -5597,7 +5597,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 2 - not assigned
+  m_Text: 1 right - next image
 --- !u!222 &1612145952
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -6804,7 +6804,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 5 - open SteamVR
+  m_Text: 
 --- !u!222 &2079928180
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -6975,7 +6975,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 3 - not assigned
+  m_Text: 1 right - look right
 --- !u!222 &2092742154
 CanvasRenderer:
   m_ObjectHideFlags: 0

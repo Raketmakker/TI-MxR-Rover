@@ -14,11 +14,11 @@ public class ControllerTypeNode : MonoBehaviour
         DetectVR.VRController controller = DetectVR.GetControllerTypeToEnum();
         switch (controller)
         {
-            case DetectVR.VRController.vive_controller:
-                nodeToEnable = this.viveNode;
-                break;
             case DetectVR.VRController.oculus_touch:
                 nodeToEnable = this.oculusNode;
+                break;
+            default:
+                nodeToEnable = this.viveNode;
                 break;
         }
 

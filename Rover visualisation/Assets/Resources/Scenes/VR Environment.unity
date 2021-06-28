@@ -416,7 +416,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 5 - open SteamVR
+  m_Text: 
 --- !u!222 &135229490
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -765,7 +765,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 1 - not assigned
+  m_Text: 1 left - go back in video time
 --- !u!222 &327452492
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1631,7 +1631,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 3 - not assigned
+  m_Text: 1 right - look right
 --- !u!222 &662657739
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1787,7 +1787,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 4 - submit in menu
+  m_Text: 
 --- !u!222 &670016355
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2188,7 +2188,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 2 - not assigned
+  m_Text: 1 right - go forward in video time
 --- !u!222 &992973192
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2960,7 +2960,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 5 - open SteamVR
+  m_Text: 
 --- !u!222 &1168431865
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3393,7 +3393,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 3 - not assigned
+  m_Text: 
 --- !u!222 &1343961555
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3573,7 +3573,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 4 - not assigned
+  m_Text: 1 down - pause video
 --- !u!222 &1423266725
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -6060,7 +6060,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 2 - not assigned
+  m_Text: 1 left - look left
 --- !u!222 &2004159769
 CanvasRenderer:
   m_ObjectHideFlags: 0
