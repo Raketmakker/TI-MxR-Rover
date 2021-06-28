@@ -60,3 +60,5 @@ crashlytics-build.properties
 Rover visualisation/Assets/Resources/Videos/
 Rover visualisation/Library/
 Rover visualisation/unityProject.vrmanifest
+
+*.cache

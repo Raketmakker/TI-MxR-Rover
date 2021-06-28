@@ -210,11 +210,7 @@
                "path" : "/user/hand/left/input/trackpad"
             },
             {
-               "inputs" : {
-                  "scroll" : {
-                     "output" : "/actions/default/in/scroll"
-                  }
-               },
+               "inputs" : {},
                "mode" : "scroll",
                "path" : "/user/hand/right/input/trackpad"
             }
