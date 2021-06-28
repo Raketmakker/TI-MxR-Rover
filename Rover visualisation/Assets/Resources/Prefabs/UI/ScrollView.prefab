@@ -122,9 +122,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 505c9aa636687e840a61524f1d1238de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scrollSpeed: 1
+  scrollSpeed: 3
   joystickAction:
-    actionPath: /actions/default/in/Scroll
+    actionPath: /actions/default/in/scrollAndSkip
     needsReinit: 0
 --- !u!65 &2866109306342630973
 BoxCollider:

@@ -14,19 +14,10 @@ public class VideoController : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (DetectVR.VRController.none == DetectVR.GetControllerTypeToEnum())
-        {
-            float value = Input.GetKey(KeyCode.Keypad6) ? 1 : Input.GetKey(KeyCode.Keypad4) ? -1 : 0;
-            Skip(value);
-            if (Input.GetKeyUp(KeyCode.Keypad5))
-                TogglePause();
-        }
-        else
-        {
-            Skip(joystickAction.GetAxis(SteamVR_Input_Sources.Any).x);
-            if (this.togglePlaying.GetLastStateUp(SteamVR_Input_Sources.Any))
-                TogglePause();
-        }
+        float value = Input.GetKey(KeyCode.Keypad6) ? 1 : Input.GetKey(KeyCode.Keypad4) ? -1 : joystickAction.GetAxis(SteamVR_Input_Sources.Any).x;
+        Skip(value);
+        if (Input.GetKeyUp(KeyCode.Keypad5) || this.togglePlaying.GetLastStateUp(SteamVR_Input_Sources.Any))
+            TogglePause();
     }
 
     private void TogglePause() 

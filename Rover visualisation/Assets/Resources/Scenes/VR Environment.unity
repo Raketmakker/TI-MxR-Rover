@@ -1875,10 +1875,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   togglePlaying:
-    actionPath: 
+    actionPath: /actions/default/in/pause
     needsReinit: 0
   joystickAction:
-    actionPath: 
+    actionPath: /actions/default/in/scrollAndSkip
     needsReinit: 0
   videoPlayer: {fileID: 708733305}
   framesToSkip: 30

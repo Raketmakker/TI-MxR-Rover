@@ -1553,9 +1553,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 021d37d4aee760c4799c9088677f4576, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pixelIncrement: 10
-  imageRecordInterval: 1
-  minimumDifference: 0.15
   dataTag: Data
 --- !u!1 &555480441
 GameObject:
@@ -5524,10 +5521,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1ce5319ed1f3b84d8f88f089d9da396, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  delay: 0.1
   imageProcessor: {fileID: 549258195}
   baseMaterial: {fileID: 2100000, guid: f723bfba37649d0419b243fffc6564c9, type: 2}
   joystickAction:
-    actionPath: 
+    actionPath: /actions/default/in/scrollAndSkip
     needsReinit: 0
   threashold: 0.1
 --- !u!1 &1612145949

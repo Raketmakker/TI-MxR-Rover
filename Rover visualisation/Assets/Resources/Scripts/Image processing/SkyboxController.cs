@@ -6,8 +6,10 @@ using Valve.VR;
 
 public class SkyboxController : MonoBehaviour
 {
+    private float timer = 0;
     private List<Material> images;
     private int imageIndex = 0;
+    public float delay = 0.5f;
     public ImageProcessor imageProcessor;
     public Material baseMaterial;
     public SteamVR_Action_Vector2 joystickAction;
@@ -21,15 +23,14 @@ public class SkyboxController : MonoBehaviour
     /// <summary>
     /// Reads the controller input every frame
     /// </summary>
-    void Update()
+    void FixedUpdate()
     {
-        if (DetectVR.VRController.none == DetectVR.GetControllerTypeToEnum())
+        float value = Input.GetKeyUp(KeyCode.Keypad6) ? 1 : Input.GetKeyUp(KeyCode.Keypad4) ? -1 : joystickAction.GetAxis(SteamVR_Input_Sources.Any).x;
+        if(Time.time > timer && value != 0)
         {
-            float value = Input.GetKeyUp(KeyCode.Keypad6) ? 1 : Input.GetKeyUp(KeyCode.Keypad4) ? -1 : 0;
             NextImage(value);
+            timer = Time.time + delay;
         }
-        else
-            NextImage(joystickAction.GetAxis(SteamVR_Input_Sources.Any).x);
     }
 
     /// <summary>

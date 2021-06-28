@@ -25,14 +25,6 @@ namespace Valve.VR
             }
         }
         
-        public virtual SteamVR_Action_Boolean Teleport
-        {
-            get
-            {
-                return SteamVR_Actions.default_Teleport;
-            }
-        }
-        
         public virtual SteamVR_Action_Boolean GrabPinch
         {
             get
@@ -105,19 +97,27 @@ namespace Valve.VR
             }
         }
         
-        public virtual SteamVR_Action_Vector2 Scroll
-        {
-            get
-            {
-                return SteamVR_Actions.default_Scroll;
-            }
-        }
-        
         public virtual SteamVR_Action_Boolean ToggleMenu
         {
             get
             {
                 return SteamVR_Actions.default_ToggleMenu;
+            }
+        }
+        
+        public virtual SteamVR_Action_Boolean pause
+        {
+            get
+            {
+                return SteamVR_Actions.default_pause;
+            }
+        }
+        
+        public virtual SteamVR_Action_Vector2 scrollAndSkip
+        {
+            get
+            {
+                return SteamVR_Actions.default_scrollAndSkip;
             }
         }
         
