@@ -16,7 +16,7 @@ public class VideoController : MonoBehaviour
     {
         float value = Input.GetKey(KeyCode.Keypad6) ? 1 : Input.GetKey(KeyCode.Keypad4) ? -1 : joystickAction.GetAxis(SteamVR_Input_Sources.Any).x;
         Skip(value);
-        if (Input.GetKeyUp(KeyCode.Keypad5) || this.togglePlaying.GetLastStateUp(SteamVR_Input_Sources.Any))
+        if (Input.GetKey(KeyCode.Keypad5) || this.togglePlaying.GetLastStateUp(SteamVR_Input_Sources.Any))
             TogglePause();
     }
 

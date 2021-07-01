@@ -25,7 +25,7 @@ public class SkyboxController : MonoBehaviour
     /// </summary>
     void FixedUpdate()
     {
-        float value = Input.GetKeyUp(KeyCode.Keypad6) ? 1 : Input.GetKeyUp(KeyCode.Keypad4) ? -1 : joystickAction.GetAxis(SteamVR_Input_Sources.Any).x;
+        float value = Input.GetKey(KeyCode.Keypad6) ? 1 : Input.GetKey(KeyCode.Keypad4) ? -1 : joystickAction.GetAxis(SteamVR_Input_Sources.Any).x;
         if(Time.time > timer && value != 0)
         {
             NextImage(value);
